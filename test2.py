@@ -6,6 +6,51 @@ import time
 UFCStats_BaseURL = "http://ufcstats.com/statistics/events/completed?page="
 HEADERS = {"User-Agent": "Mozilla/5.0"}
 
+def main():
+    # 1) Scrape ALL events
+    events_list = []
+    current_page_number = 1
+
+    while True:
+        soup = get_page_html(current_page_number)
+        page_events = parse_page(soup)
+
+        if not page_events:
+            break
+
+        events_list.extend(page_events)
+        print(
+            f"Page {current_page_number}: "
+            f"{len(page_events)} events "
+            f"(total: {len(events_list)})"
+        )
+
+        current_page_number += 1
+        time.sleep(1)
+
+    print("Finished scraping events.")
+    events_df = pd.DataFrame(events_list)
+    events_df.to_csv("ufc_events.csv", index=False)
+    print("Saved events to ufc_events.csv")
+
+    # 2) Scrape ALL fights from ALL events
+    all_fights = []
+    for i, event in enumerate(events_list, start=1):
+        event_name = event["event_name"]
+        event_url = event["event_url"]
+
+        event_soup = get_event_soup(event_url)
+        fights = parse_fights_from_event(event_name, event_url, event_soup)
+
+        all_fights.extend(fights)
+        print(f"[{i}/{len(events_list)}] {event_name}: {len(fights)} fights (total fights: {len(all_fights)})")
+
+        time.sleep(1)
+
+    fights_df = pd.DataFrame(all_fights)
+    fights_df.to_csv("ufc_fights.csv", index=False)
+    print("Saved fights to ufc_fights.csv")
+
 def get_page_html(page_number):
     url = UFCStats_BaseURL + str(page_number)
     response = requests.get(url, headers=HEADERS, timeout=15)
@@ -80,51 +125,6 @@ def parse_fights_from_event(event_name, event_url, event_soup):
         })
 
     return fights
-
-def main():
-    # 1) Scrape ALL events
-    events_list = []
-    current_page_number = 1
-
-    while True:
-        soup = get_page_html(current_page_number)
-        page_events = parse_page(soup)
-
-        if not page_events:
-            break
-
-        events_list.extend(page_events)
-        print(
-            f"Page {current_page_number}: "
-            f"{len(page_events)} events "
-            f"(total: {len(events_list)})"
-        )
-
-        current_page_number += 1
-        time.sleep(1)
-
-    print("Finished scraping events.")
-    events_df = pd.DataFrame(events_list)
-    events_df.to_csv("ufc_events.csv", index=False)
-    print("Saved events to ufc_events.csv")
-
-    # 2) Scrape ALL fights from ALL events
-    all_fights = []
-    for i, event in enumerate(events_list, start=1):
-        event_name = event["event_name"]
-        event_url = event["event_url"]
-
-        event_soup = get_event_soup(event_url)
-        fights = parse_fights_from_event(event_name, event_url, event_soup)
-
-        all_fights.extend(fights)
-        print(f"[{i}/{len(events_list)}] {event_name}: {len(fights)} fights (total fights: {len(all_fights)})")
-
-        time.sleep(1)
-
-    fights_df = pd.DataFrame(all_fights)
-    fights_df.to_csv("ufc_fights.csv", index=False)
-    print("Saved fights to ufc_fights.csv")
 
 if __name__ == "__main__":
     main()
