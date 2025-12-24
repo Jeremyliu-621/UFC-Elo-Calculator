@@ -5,7 +5,7 @@ K = 40
 
 def main():
     # load and clean dataframe
-    df = pd.read_csv("all_ufc_fights_new.csv")
+    df = pd.read_csv("all_ufc_fights.csv")
     df = df.rename(columns={
         "fighter_1_name": "fighter_1",
         "fighter_2_name": "fighter_2",
@@ -18,7 +18,7 @@ def main():
     df["fighter_1_elo_end"] = 0.0
     df["fighter_2_elo_end"] = 0.0
 
-    # remember fighter elos
+    # remember fighter elo
     elo = {}
 
     for i, row in df.iterrows():
