@@ -81,7 +81,6 @@ def parse_page(soup):
         link = event.get("href")
 
         # creates a list of dictionaries with "event_name" and "event_url"
-        
         events.append({
             "event_name": name,
             "event_url": link
