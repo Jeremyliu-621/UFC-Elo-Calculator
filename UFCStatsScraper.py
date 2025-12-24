@@ -63,7 +63,7 @@ def main():
     print("All fights collected.")
 
     fights_df = pd.DataFrame(all_fights)
-    fights_df.to_csv("all_ufc_fights_new.csv", index=False)
+    fights_df.to_csv("all_ufc_fights.csv", index=False)
     print("Saved all_fights to all_ufc_fights.csv")
 
 # since the page has multiple pages, needs a function that can parse repeatedly, according to page #

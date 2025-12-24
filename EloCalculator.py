@@ -22,6 +22,7 @@ def main():
     elo = {}
 
     for i, row in df.iterrows():
+        print(f"parsing fight #({i}) in {len(i)}")
         fighter_1 = row["fighter_1"]
         fighter_2 = row["fighter_2"]
 
