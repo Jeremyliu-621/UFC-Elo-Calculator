@@ -29,17 +29,15 @@ def main():
         )
 
         # continues to next iteration
-        #current_page_number += 1
-        time.sleep(0.1)
-        break # remove later
+        current_page_number += 1
+        time.sleep(0.05)
 
     print(
-        "Finished scraping all events on the main page."
+        "Finished scraping all events on the main page.",
         "Created 'event_name' and 'event_url' in all_events"
         )
-    # convert all_events into a pandas dataframe
-    events_df = pd.DataFrame(all_events)
-    print("convert all_events into a pandas dataframe")
+    
+    print(all_events[:5])   # first 5 only
 
     # 2) scrape ALL fights from ALL events within each event's fighter
 
@@ -53,11 +51,20 @@ def main():
         event_name = event["event_name"]
         event_url = event["event_url"]
 
+        print(f"parsing fight number ({current_event}) out of ({event_count}) fights")
+
         event_soup = get_event_soup(event_url)
         fights = parse_fights_from_event(event_name, event_url, event_soup)
 
+        all_fights.extend(fights)
+        current_event += 1
+        time.sleep(0.005)
+        
+    print("All fights collected.")
 
-
+    fights_df = pd.DataFrame(all_fights)
+    fights_df.to_csv("all_ufc_fights_new.csv", index=False)
+    print("Saved all_fights to all_ufc_fights.csv")
 
 # since the page has multiple pages, needs a function that can parse repeatedly, according to page #
 def get_page_html(page_number):
@@ -74,6 +81,7 @@ def parse_page(soup):
         link = event.get("href")
 
         # creates a list of dictionaries with "event_name" and "event_url"
+        
         events.append({
             "event_name": name,
             "event_url": link
@@ -107,17 +115,6 @@ def parse_fights_from_event(event_name, event_url, event_soup):
 
         fighter_1_result = row_columns[0].get_text(strip=True)
 
-        '''
-        find_all("p") due to HTML tree:
-        <tr>
-            <td>W</td>
-            <td>
-                <p>Jon Jones</p>
-                <p>Daniel Cormier</p>
-            </td>
-        </tr>
-        '''
-
         # fighter names
         fighter_1_name, fighter_2_name = sort_two_paragraphs(row_columns[1])
 
@@ -128,7 +125,7 @@ def parse_fights_from_event(event_name, event_url, event_soup):
         fighter_1_number_submissions, fighter_2_number_submissions = sort_two_paragraphs(row_columns[5])
 
         # weightclass
-        weightclass = row_columns[6].find_all("p")
+        weightclass = row_columns[6].get_text(" ", strip=True)
 
         # method + move
         method, move = sort_two_paragraphs(row_columns[7])
@@ -166,13 +163,14 @@ def parse_fights_from_event(event_name, event_url, event_soup):
             "round_that_won": round_that_won,
             "time_elapsed_in_winround": time_elapsed_in_winround
         })
-    
 
+    return specific_event_fights
+    
 def sort_two_paragraphs(row_column):
 
-    row_column.find_all("p")
-    fighter_1_stat = row_column[0].get_text(strip=True)
-    fighter_2_stat = row_column[1].get_text(strip=True)
+    paragraphs = row_column.find_all("p")
+    fighter_1_stat = paragraphs[0].get_text(strip=True) if len(paragraphs) > 0 else ""
+    fighter_2_stat = paragraphs[1].get_text(strip=True) if len(paragraphs) > 1 else ""
     return fighter_1_stat, fighter_2_stat
 
 if __name__ == "__main__":
