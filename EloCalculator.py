@@ -5,7 +5,7 @@ K = 40
 
 def main():
     # load and clean dataframe
-    df = pd.read_csv("all_ufc_fights_new")
+    df = pd.read_csv("all_ufc_fights_new.csv")
     df = df.rename(columns={
         "fighter_1_name": "fighter_1",
         "fighter_2_name": "fighter_2",
@@ -28,13 +28,13 @@ def main():
         # initializes new fighter's elo
         if fighter_1 not in elo:
             elo[fighter_1] = INITIAL_ELO
-        if fighter_1 not in elo:
-            elo[fighter_1] = INITIAL_ELO
+        if fighter_2 not in elo:
+            elo[fighter_2] = INITIAL_ELO
         
         # 1) saves starting elo before a specific fight
 
         fighter_1_starting_elo = elo[fighter_1]
-        fighter_2_starting_elo = elo[fighter_1]
+        fighter_2_starting_elo = elo[fighter_2]
 
         df.at[i, "fighter_1_elo_start"] = fighter_1_starting_elo
         df.at[i, "fighter_2_elo_start"] = fighter_2_starting_elo
@@ -67,6 +67,12 @@ def main():
     df.to_csv("ufc_fights_with_elo.csv", index=False)
     print("Saved.")
     print("Created ufc_fights_with_elo.csv")
+
+    elo_table = pd.DataFrame(
+        sorted(elo.items(), key=lambda x: x[1], reverse=True),
+        columns=["Fighter", "Elo Rating"]
+    )
+    elo_table.to_csv("current_fighters_elo.csv", index=False)
 
 def expected_score_for_a_calculator(elo_a, elo_b):
     # returns the probability that fighter 'a' will win
