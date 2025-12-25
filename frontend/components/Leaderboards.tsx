@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { GlowingEffect } from "@/components/ui/glowing-effect";
 import BlurTextAnimation from "@/components/blur-text-animation";
+import TablePreview from "@/components/TablePreview";
 import { cn } from "@/lib/utils";
 
 interface EloData {
@@ -57,9 +58,12 @@ const LeaderboardSection = ({ title, children }: { title: string; children: Reac
 
 export default function Leaderboards() {
   const [eloData, setEloData] = useState<EloData[]>([]);
+  const [fullEloData, setFullEloData] = useState<EloData[]>([]);
   const [statsData, setStatsData] = useState<StatsData[]>([]);
   const [loading, setLoading] = useState(true);
   const [visibleTables, setVisibleTables] = useState<Set<number>>(new Set());
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewData, setPreviewData] = useState<{ title: string; data: Array<{ fighter: string; value: number | string }> } | null>(null);
   const tableRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
@@ -73,6 +77,7 @@ export default function Leaderboards() {
         const elo = await eloRes.json();
         const stats = await statsRes.json();
         
+        setFullEloData(elo);
         setEloData(elo.slice(0, 5)); // Top 5
         setStatsData(stats);
         setLoading(false);
@@ -130,25 +135,60 @@ export default function Leaderboards() {
   const topSubmissions = [...statsData].sort((a, b) => b.submissions - a.submissions).slice(0, 5);
   const topKnockdowns = [...statsData].sort((a, b) => b.knockdowns - a.knockdowns).slice(0, 5);
 
+  const handleTableClick = (title: string, fullData: Array<{ fighter: string; value: number | string }>) => {
+    setPreviewData({ title, data: fullData });
+    setPreviewOpen(true);
+  };
+
   const leaderboards = [
-    { title: "Elo Ratings", data: eloData, render: (fighter: EloData, index: number) => (
-      <LeaderboardRow key={fighter.fighter} rank={index + 1} name={fighter.fighter} value={fighter.elo.toFixed(2)} />
-    )},
-    { title: "Most Wins", data: topWins, render: (fighter: StatsData, index: number) => (
-      <LeaderboardRow key={fighter.fighter} rank={index + 1} name={fighter.fighter} value={fighter.wins} />
-    )},
-    { title: "Most Strikes", data: topStrikes, render: (fighter: StatsData, index: number) => (
-      <LeaderboardRow key={fighter.fighter} rank={index + 1} name={fighter.fighter} value={fighter.strikes.toLocaleString()} />
-    )},
-    { title: "Most Takedowns", data: topTakedowns, render: (fighter: StatsData, index: number) => (
-      <LeaderboardRow key={fighter.fighter} rank={index + 1} name={fighter.fighter} value={fighter.takedowns} />
-    )},
-    { title: "Most Submissions", data: topSubmissions, render: (fighter: StatsData, index: number) => (
-      <LeaderboardRow key={fighter.fighter} rank={index + 1} name={fighter.fighter} value={fighter.submissions} />
-    )},
-    { title: "Most Knockdowns", data: topKnockdowns, render: (fighter: StatsData, index: number) => (
-      <LeaderboardRow key={fighter.fighter} rank={index + 1} name={fighter.fighter} value={fighter.knockdowns} />
-    )},
+    { 
+      title: "Elo Ratings", 
+      previewData: fullEloData.map(f => ({ fighter: f.fighter, value: f.elo.toFixed(2) })),
+      data: eloData, 
+      render: (fighter: EloData, index: number) => (
+        <LeaderboardRow key={fighter.fighter} rank={index + 1} name={fighter.fighter} value={fighter.elo.toFixed(2)} />
+      )
+    },
+    { 
+      title: "Most Wins", 
+      previewData: [...statsData].sort((a, b) => b.wins - a.wins).map(f => ({ fighter: f.fighter, value: f.wins })),
+      data: topWins, 
+      render: (fighter: StatsData, index: number) => (
+        <LeaderboardRow key={fighter.fighter} rank={index + 1} name={fighter.fighter} value={fighter.wins} />
+      )
+    },
+    { 
+      title: "Most Strikes", 
+      previewData: [...statsData].sort((a, b) => b.strikes - a.strikes).map(f => ({ fighter: f.fighter, value: f.strikes.toLocaleString() })),
+      data: topStrikes, 
+      render: (fighter: StatsData, index: number) => (
+        <LeaderboardRow key={fighter.fighter} rank={index + 1} name={fighter.fighter} value={fighter.strikes.toLocaleString()} />
+      )
+    },
+    { 
+      title: "Most Takedowns", 
+      previewData: [...statsData].sort((a, b) => b.takedowns - a.takedowns).map(f => ({ fighter: f.fighter, value: f.takedowns })),
+      data: topTakedowns, 
+      render: (fighter: StatsData, index: number) => (
+        <LeaderboardRow key={fighter.fighter} rank={index + 1} name={fighter.fighter} value={fighter.takedowns} />
+      )
+    },
+    { 
+      title: "Most Submissions", 
+      previewData: [...statsData].sort((a, b) => b.submissions - a.submissions).map(f => ({ fighter: f.fighter, value: f.submissions })),
+      data: topSubmissions, 
+      render: (fighter: StatsData, index: number) => (
+        <LeaderboardRow key={fighter.fighter} rank={index + 1} name={fighter.fighter} value={fighter.submissions} />
+      )
+    },
+    { 
+      title: "Most Knockdowns", 
+      previewData: [...statsData].sort((a, b) => b.knockdowns - a.knockdowns).map(f => ({ fighter: f.fighter, value: f.knockdowns })),
+      data: topKnockdowns, 
+      render: (fighter: StatsData, index: number) => (
+        <LeaderboardRow key={fighter.fighter} rank={index + 1} name={fighter.fighter} value={fighter.knockdowns} />
+      )
+    },
   ];
 
   return (
@@ -174,14 +214,16 @@ export default function Leaderboards() {
               tableRefs.current[index] = el;
             }}
             className={cn(
-              "transition-all duration-1000",
+              "transition-all duration-1000 cursor-pointer group",
               visibleTables.has(index)
                 ? "opacity-100 blur-0 scale-100"
-                : "opacity-0 blur-md scale-95"
+                : "opacity-0 blur-md scale-95",
+              "hover:scale-105"
             )}
             style={{
               transitionDelay: `${index * 100}ms`,
             }}
+            onClick={() => handleTableClick(leaderboard.title, leaderboard.previewData)}
           >
             <LeaderboardSection title={leaderboard.title}>
               {leaderboard.data.map((fighter, fighterIndex) =>
@@ -191,6 +233,19 @@ export default function Leaderboards() {
           </div>
         ))}
       </div>
+
+      {/* Preview Modal */}
+      {previewData && (
+        <TablePreview
+          title={previewData.title}
+          data={previewData.data}
+          isOpen={previewOpen}
+          onClose={() => {
+            setPreviewOpen(false);
+            setTimeout(() => setPreviewData(null), 300);
+          }}
+        />
+      )}
     </div>
   );
 }
