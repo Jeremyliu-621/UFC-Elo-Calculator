@@ -1,11 +1,43 @@
 "use client"
 
+import { useState } from 'react';
 import AnimatedGradientBackground from "@/components/ui/animated-gradient-background";
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import Navbar from "@/components/Navbar";
 import Link from 'next/link';
+import { Linkedin, Github, Mail, Instagram } from 'lucide-react';
+import { cn } from "@/lib/utils";
+
+const socialLinks = [
+  {
+    name: 'LinkedIn',
+    href: 'https://www.linkedin.com/in/jmyl',
+    icon: Linkedin,
+    ariaLabel: 'Visit LinkedIn profile',
+  },
+  {
+    name: 'Email',
+    href: 'mailto:jeremyliu621@gmail.com',
+    icon: Mail,
+    ariaLabel: 'Send email',
+  },
+  {
+    name: 'Github',
+    href: 'https://github.com/Jeremyliu-621',
+    icon: Github,
+    ariaLabel: 'Visit GitHub profile',
+  },
+  {
+    name: 'Instagram',
+    href: 'https://instagram.com/jeremyliu.621',
+    icon: Instagram,
+    ariaLabel: 'Visit Instagram profile',
+  },
+];
 
 const Hero = () => {
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
   return (
     <div className="relative w-full min-h-screen flex flex-col items-center justify-start px-4 text-center">
       {/* Fixed Gradient Background that extends */}
@@ -13,17 +45,56 @@ const Hero = () => {
         <AnimatedGradientBackground Breathing={true} />
       </div>
 
-      {/* Subtle credit in top right - fixed position */}
-      <div className="fixed z-50" style={{ top: '1.5rem', right: 'calc(1.5rem + 8px)' }}>
-        <Link
-          href="https://github.com/Jeremyliu-621"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-gray-500/60 hover:text-gray-400/80 transition-colors duration-300 text-xs font-light"
-          style={{ fontFamily: 'var(--font-montserrat)' }}
-        >
-          jeremy liu
-        </Link>
+      {/* Subtle credit in top right - fixed position with blur background and dropdown */}
+      <div 
+        className="fixed z-50" 
+        style={{ top: '1.5rem', right: 'calc(1.5rem + 8px)' }}
+        onMouseEnter={() => setIsDropdownOpen(true)}
+        onMouseLeave={() => setIsDropdownOpen(false)}
+      >
+        <div className="relative">
+          <div className="rounded-lg bg-black/40 backdrop-blur-md border border-gray-700/50 px-4 py-2 w-fit">
+            <button
+              className="text-gray-500/60 hover:text-gray-400/80 transition-colors duration-300 text-xs font-light cursor-pointer whitespace-nowrap"
+              style={{ fontFamily: 'var(--font-montserrat)' }}
+            >
+              jeremy liu
+            </button>
+          </div>
+          
+          {/* Dropdown Menu */}
+          <div
+            className={cn(
+              "absolute top-full right-0 mt-2 rounded-lg bg-black/40 backdrop-blur-md border border-gray-700/50 overflow-hidden transition-all duration-300 w-full",
+              isDropdownOpen
+                ? "opacity-100 translate-y-0 pointer-events-auto"
+                : "opacity-0 -translate-y-2 pointer-events-none"
+            )}
+          >
+            {socialLinks.map((link, index) => {
+              const Icon = link.icon;
+              return (
+                <Link
+                  key={link.name}
+                  href={link.href}
+                  target={link.href.startsWith('http') ? '_blank' : undefined}
+                  rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+                  aria-label={link.ariaLabel}
+                  className={cn(
+                    "flex items-center gap-3 px-4 py-2.5 text-gray-300 hover:text-white hover:bg-gray-800/30 transition-all duration-200",
+                    index !== socialLinks.length - 1 && "border-b border-gray-700/30"
+                  )}
+                  style={{
+                    fontFamily: 'var(--font-montserrat)'
+                  }}
+                >
+                  <Icon className="size-4" />
+                  <span className="text-xs font-light">{link.name}</span>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
       </div>
 
       <div className="relative z-10 flex flex-col items-center pt-12 md:pt-20">

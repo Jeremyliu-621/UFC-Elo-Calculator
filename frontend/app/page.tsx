@@ -2,7 +2,7 @@ import Hero from "@/components/Hero";
 import Leaderboards from "@/components/Leaderboards";
 import FighterSearch from "@/components/FighterSearch";
 import Resources from "@/components/Resources";
-import FooterSection from "@/components/footer";
+import DownloadsSocials from "@/components/DownloadsSocials";
 
 export default function Home() {
   return (
@@ -17,8 +17,8 @@ export default function Home() {
       <section id="resources" className="snap-start min-h-screen">
         <Resources />
       </section>
-      <section className="snap-start">
-        <FooterSection />
+      <section id="downloads" className="snap-start min-h-screen">
+        <DownloadsSocials />
       </section>
     </div>
   );

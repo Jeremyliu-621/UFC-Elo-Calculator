@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { GlowingEffect } from "@/components/ui/glowing-effect";
 import { cn } from "@/lib/utils";
-import { Download, Github } from 'lucide-react';
+import { Github } from 'lucide-react';
 import Link from 'next/link';
 
 const eloCode = `import pandas as pd
@@ -176,15 +176,185 @@ def to_int(x):
 if __name__ == "__main__":
     main()`;
 
-const csvFiles = [
-  { name: "Current Fighters Elo", file: "current_fighters_elo.csv" },
-  { name: "Fighter Statistics", file: "fighter_stats.csv" },
-  { name: "All UFC Fights", file: "all_ufc_fights.csv" },
-  { name: "UFC Fights with Elo", file: "ufc_fights_with_elo.csv" },
-];
+const scraperCode = `import requests
+from bs4 import BeautifulSoup
+import pandas as pd
+import time
+
+UFCStats_BaseURL = "http://ufcstats.com/statistics/events/completed?page="
+
+def main():
+
+    # 1) scrapes all events
+    all_events = []
+    current_page_number = 1
+
+    while True:
+        soup = get_page_html(current_page_number)
+        # list of dictionaries with "event_name" and "event_url"
+        page_events = parse_page(soup)
+        
+        if not page_events: # /if page_events == []:
+            print(f"no events in page {current_page_number}")
+            break
+        
+        # adds all the page from "current_page_number" to all page_events
+        all_events.extend(page_events)
+        print(
+            f"Page {current_page_number}: "
+            f"{len(page_events)} events "
+            f"(total: {len(all_events)})"
+        )
+
+        # continues to next iteration
+        current_page_number += 1
+        time.sleep(0.05)
+
+    print(
+        "Finished scraping all events on the main page.",
+        "Created 'event_name' and 'event_url' in all_events"
+        )
+    
+    print(all_events[:5])   # first 5 only
+
+    # 2) scrape ALL fights from ALL events within each event's fighter
+
+    all_fights = []
+
+    event_count = len(all_events)
+    current_event = 1
+
+    for event in all_events:
+        # get 'event_name' and 'event
+        event_name = event["event_name"]
+        event_url = event["event_url"]
+
+        print(f"parsing fight number ({current_event}) out of ({event_count}) fights")
+
+        event_soup = get_event_soup(event_url)
+        fights = parse_fights_from_event(event_name, event_url, event_soup)
+
+        all_fights.extend(fights)
+        current_event += 1
+        time.sleep(0.005)
+        
+    print("All fights collected.")
+
+    fights_df = pd.DataFrame(all_fights)
+    fights_df.to_csv("all_ufc_fights.csv", index=False)
+    print("Saved all_fights to all_ufc_fights.csv")
+
+# since the page has multiple pages, needs a function that can parse repeatedly, according to page #
+def get_page_html(page_number):
+    page = requests.get(UFCStats_BaseURL + str(page_number))
+    return BeautifulSoup(page.content, "html.parser")
+
+def parse_page(soup):
+    # finds all events on a page
+    page_events = soup.find_all("a", class_="b-link b-link_style_black")
+    # exits when all events have been exhausted
+    events = []
+    for event in page_events:
+        name = event.get_text(strip=True)
+        link = event.get("href")
+
+        # creates a list of dictionaries with "event_name" and "event_url"
+        events.append({
+            "event_name": name,
+            "event_url": link
+        })
+
+    return events
+
+def get_event_soup(event_url):
+    specific_event_soup = requests.get(event_url)
+    return BeautifulSoup(specific_event_soup.content, "html.parser")
+
+def parse_fights_from_event(event_name, event_url, event_soup):
+    specific_event_fights = []
+
+    # find the table that contains all the fights
+    table_body = event_soup.find("tbody")
+    if table_body is None:
+        print("Can not find fights within a certain event.")
+        return specific_event_fights
+    
+    # each table row is one fight
+    fight_rows = table_body.find_all("tr")
+
+    for fight_row in fight_rows:
+        row_columns = fight_row.find_all("td")
+
+        # checks for redundant row_columns
+        if len(row_columns) < 10:
+            print("redundant column in row_column check found.")
+            continue
+
+        fighter_1_result = row_columns[0].get_text(strip=True)
+
+        # fighter names
+        fighter_1_name, fighter_2_name = sort_two_paragraphs(row_columns[1])
+
+        # fighter KD/STR/TD/SUB
+        fighter_1_knockdowns_number, fighter_2_knockdowns_number = sort_two_paragraphs(row_columns[2])
+        fighter_1_number_strikes, fighter_2_number_strikes = sort_two_paragraphs(row_columns[3])
+        fighter_1_number_takedowns, fighter_2_number_takedowns = sort_two_paragraphs(row_columns[4])
+        fighter_1_number_submissions, fighter_2_number_submissions = sort_two_paragraphs(row_columns[5])
+
+        # weightclass
+        weightclass = row_columns[6].get_text(" ", strip=True)
+
+        # method + move
+        method, move = sort_two_paragraphs(row_columns[7])
+
+        # round + time
+        round_that_won = row_columns[8].get_text(strip=True)
+        time_elapsed_in_winround = row_columns[9].get_text(strip=True)
+
+        specific_event_fights.append({
+            "event": event_name,
+            "event_url": event_url,
+
+            "fighter_1_result": fighter_1_result,
+
+            "fighter_1_name": fighter_1_name,
+            "fighter_2_name": fighter_2_name,
+
+            "fighter_1_knockdowns_number": fighter_1_knockdowns_number,
+            "fighter_2_knockdowns_number": fighter_2_knockdowns_number,
+
+            "fighter_1_number_strikes": fighter_1_number_strikes,
+            "fighter_2_number_strikes": fighter_2_number_strikes,
+
+            "fighter_1_number_takedowns": fighter_1_number_takedowns,
+            "fighter_2_number_takedowns": fighter_2_number_takedowns,
+
+            "fighter_1_number_submissions": fighter_1_number_submissions,
+            "fighter_2_number_submissions": fighter_2_number_submissions,
+
+            "weightclass": weightclass,
+
+            "method": method,
+            "move": move,
+
+            "round_that_won": round_that_won,
+            "time_elapsed_in_winround": time_elapsed_in_winround
+        })
+
+    return specific_event_fights
+    
+def sort_two_paragraphs(row_column):
+
+    paragraphs = row_column.find_all("p")
+    fighter_1_stat = paragraphs[0].get_text(strip=True) if len(paragraphs) > 0 else ""
+    fighter_2_stat = paragraphs[1].get_text(strip=True) if len(paragraphs) > 1 else ""
+    return fighter_1_stat, fighter_2_stat
+
+if __name__ == "__main__":
+    main()`;
 
 export default function Resources() {
-  const [activeCode, setActiveCode] = useState<'elo' | 'stats'>('elo');
+  const [activeCode, setActiveCode] = useState<'elo' | 'stats' | 'scraper'>('elo');
 
   return (
     <div className="relative z-10 px-4 py-8 max-w-7xl mx-auto flex flex-col items-center justify-center min-h-screen">
@@ -192,9 +362,14 @@ export default function Resources() {
         {/* Left Side - Controls and Downloads */}
         <div className="flex flex-col space-y-6">
           {/* Source Code Title */}
-          <h2 className="text-2xl font-light text-white" style={{ fontFamily: 'var(--font-montserrat)' }}>
-            Source Code
-          </h2>
+          <div className="space-y-3">
+            <h2 className="text-2xl font-light text-white" style={{ fontFamily: 'var(--font-montserrat)' }}>
+              Source Code
+            </h2>
+            <p className="text-base font-light text-gray-300 leading-relaxed" style={{ fontFamily: 'var(--font-montserrat)' }}>
+              I scraped the UFC stats page with BeautifulSoup, then used pandas to compile the data with further parsing to organize it for Elo calculations, fighter statistics, and more.
+            </p>
+          </div>
 
           {/* GitHub Link */}
           <Link
@@ -224,11 +399,45 @@ export default function Resources() {
           </Link>
           
           {/* Code Tabs */}
-          <div className="flex gap-4">
+          <div className="flex flex-col gap-3">
+            <button
+              onClick={() => setActiveCode('scraper')}
+              className={cn(
+                "relative rounded-xl border-[0.75px] border-gray-700/50 p-1.5 transition-all duration-300 cursor-pointer group w-full",
+                "hover:scale-105",
+                activeCode === 'scraper' && "border-gray-700/50"
+              )}
+            >
+              <GlowingEffect
+                spread={20}
+                glow={true}
+                disabled={false}
+                proximity={64}
+                inactiveZone={0.7}
+                borderWidth={1}
+                movementDuration={2}
+              />
+              <div className={cn(
+                "relative flex items-center justify-center rounded-lg border-[0.75px] border-gray-700/30 bg-black/40 backdrop-blur-sm px-5 py-2.5 transition-all duration-300",
+                activeCode === 'scraper'
+                  ? "bg-gray-800/40 backdrop-blur-md border-gray-700/40"
+                  : "hover:bg-gray-800/30"
+              )}>
+                <span className={cn(
+                  "text-sm font-light transition-colors duration-300",
+                  activeCode === 'scraper'
+                    ? "text-white"
+                    : "text-gray-300 group-hover:text-white"
+                )} style={{ fontFamily: 'var(--font-montserrat)' }}>
+                  Web Scraper
+                </span>
+              </div>
+            </button>
+
             <button
               onClick={() => setActiveCode('elo')}
               className={cn(
-                "relative rounded-xl border-[0.75px] border-gray-700/50 p-1.5 transition-all duration-300 cursor-pointer group flex-1",
+                "relative rounded-xl border-[0.75px] border-gray-700/50 p-1.5 transition-all duration-300 cursor-pointer group w-full",
                 "hover:scale-105",
                 activeCode === 'elo' && "border-gray-700/50"
               )}
@@ -262,7 +471,7 @@ export default function Resources() {
             <button
               onClick={() => setActiveCode('stats')}
               className={cn(
-                "relative rounded-xl border-[0.75px] border-gray-700/50 p-1.5 transition-all duration-300 cursor-pointer group flex-1",
+                "relative rounded-xl border-[0.75px] border-gray-700/50 p-1.5 transition-all duration-300 cursor-pointer group w-full",
                 "hover:scale-105",
                 activeCode === 'stats' && "border-gray-700/50"
               )}
@@ -293,43 +502,6 @@ export default function Resources() {
               </div>
             </button>
           </div>
-
-          {/* CSV Downloads Section */}
-          <div className="space-y-4">
-            <h3 className="text-xl font-light text-white" style={{ fontFamily: 'var(--font-montserrat)' }}>
-              Download Data as CSV
-            </h3>
-            
-            <div className="space-y-3">
-              {csvFiles.map((csv) => (
-                <a
-                  key={csv.file}
-                  href={`/${csv.file}`}
-                  download
-                  className="group relative rounded-xl border-[0.75px] border-gray-700/50 p-1.5 transition-all duration-300 cursor-pointer hover:scale-105 w-full"
-                >
-                  <GlowingEffect
-                    spread={20}
-                    glow={true}
-                    disabled={false}
-                    proximity={64}
-                    inactiveZone={0.7}
-                    borderWidth={1}
-                    movementDuration={2}
-                  />
-                  <div className={cn(
-                    "relative flex items-center justify-center gap-3 rounded-lg border-[0.75px] border-gray-700/30 bg-black/40 backdrop-blur-sm px-5 py-3 transition-all duration-300",
-                    "hover:bg-gray-800/30"
-                  )}>
-                    <Download className="size-5 text-gray-300 group-hover:text-white transition-colors duration-300" />
-                    <span className="text-sm font-light text-gray-300 group-hover:text-white transition-colors duration-300" style={{ fontFamily: 'var(--font-montserrat)' }}>
-                      {csv.name}
-                    </span>
-                  </div>
-                </a>
-              ))}
-            </div>
-          </div>
         </div>
 
         {/* Right Side - Scrollable Code Display */}
@@ -350,7 +522,9 @@ export default function Resources() {
             {/* Scrollable Code content */}
             <div className="flex-1 overflow-y-auto overflow-x-auto custom-scrollbar p-4" style={{ minWidth: 0, width: '100%', maxWidth: '100%' }}>
               <pre className="text-sm text-gray-200 font-mono leading-relaxed whitespace-pre" style={{ display: 'block', margin: 0 }}>
-                <code style={{ display: 'block', minWidth: 'max-content' }}>{activeCode === 'elo' ? eloCode : statsCode}</code>
+                <code style={{ display: 'block', minWidth: 'max-content' }}>
+                  {activeCode === 'elo' ? eloCode : activeCode === 'stats' ? statsCode : scraperCode}
+                </code>
               </pre>
             </div>
           </div>
