@@ -30,12 +30,8 @@ Libraries/Frameworks: Next.js, React, TailwindCSS, PostCSS, Pandas, BeautifulSou
 
 ## Credits
 
-Project inspiration from CS50's problem sets and weeks (lessons).
-- Main page   : https://cs50.harvard.edu/python/2022/
-- Weeks       : https://cs50.harvard.edu/python/2022/weeks/
-- Problem Sets: https://cs50.harvard.edu/python/2022/psets/
-
-Some problem set solutions are altered to incorporate more knowledge.
+Inspired by Trixter Productions.
+https://www.youtube.com/watch?v=PLwhzlyjEgU
 
 ## License
 MIT © [Jeremy Liu]()
