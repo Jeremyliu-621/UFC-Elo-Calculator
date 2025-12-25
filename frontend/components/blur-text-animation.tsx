@@ -18,6 +18,8 @@ interface BlurTextAnimationProps {
   fontFamily?: string;
   textColor?: string;
   animationDelay?: number;
+  triggerOnVisible?: boolean;
+  isVisible?: boolean;
 }
 
 export default function BlurTextAnimation({
@@ -27,7 +29,9 @@ export default function BlurTextAnimation({
   fontSize = "text-4xl md:text-5xl lg:text-6xl",
   fontFamily = "font-['Avenir_Next',_'Avenir',_system-ui,_sans-serif]",
   textColor = "text-white",
-  animationDelay = 4000
+  animationDelay = 4000,
+  triggerOnVisible = false,
+  isVisible = false
 }: BlurTextAnimationProps) {
   const [isAnimating, setIsAnimating] = useState(false);
   const animationTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
@@ -44,13 +48,13 @@ export default function BlurTextAnimation({
       
       const exponentialDelay = Math.pow(progress, 0.8) * 0.5;
       
-      const baseDelay = index * 0.06;
+      const baseDelay = index * 0.03;
       
       const microVariation = (Math.random() - 0.5) * 0.05;
       
       return {
         text: word,
-        duration: 2.2 + Math.cos(index * 0.3) * 0.3,
+        duration: 1.0 + Math.cos(index * 0.3) * 0.2,
         delay: baseDelay + exponentialDelay + microVariation,
         blur: 12 + Math.floor(Math.random() * 8),
         scale: 0.9 + Math.sin(index * 0.2) * 0.05
@@ -59,6 +63,19 @@ export default function BlurTextAnimation({
   }, [text, words]);
 
   useEffect(() => {
+    if (triggerOnVisible) {
+      // Trigger based on visibility prop
+      if (isVisible) {
+        setTimeout(() => {
+          setIsAnimating(true);
+        }, 200);
+      } else {
+        setIsAnimating(false);
+      }
+      return;
+    }
+
+    // Original auto-looping behavior
     const startAnimation = () => {
       setTimeout(() => {
         setIsAnimating(true);
@@ -85,7 +102,7 @@ export default function BlurTextAnimation({
       if (animationTimeoutRef.current) clearTimeout(animationTimeoutRef.current);
       if (resetTimeoutRef.current) clearTimeout(resetTimeoutRef.current);
     };
-  }, [textWords, animationDelay]);
+  }, [textWords, animationDelay, triggerOnVisible, isVisible]);
 
   return (
     <div className={`flex items-center justify-center ${className}`}>

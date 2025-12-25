@@ -64,7 +64,9 @@ export default function Leaderboards() {
   const [visibleTables, setVisibleTables] = useState<Set<number>>(new Set());
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewData, setPreviewData] = useState<{ title: string; data: Array<{ fighter: string; value: number | string }> } | null>(null);
+  const [titleVisible, setTitleVisible] = useState(false);
   const tableRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const titleRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -88,6 +90,29 @@ export default function Leaderboards() {
     };
 
     fetchData();
+  }, []);
+
+  // Intersection Observer for title visibility
+  useEffect(() => {
+    if (!titleRef.current) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          setTitleVisible(entry.isIntersecting);
+        });
+      },
+      {
+        threshold: 0.3,
+        rootMargin: '0px 0px -50% 0px',
+      }
+    );
+
+    observer.observe(titleRef.current);
+
+    return () => {
+      observer.disconnect();
+    };
   }, []);
 
   // Intersection Observer for progressive table reveal
@@ -193,7 +218,7 @@ export default function Leaderboards() {
 
   return (
     <div className="relative z-10 px-4 py-8 max-w-7xl mx-auto flex flex-col items-center justify-center min-h-screen">
-      <div className="mb-12 w-full">
+      <div className="mb-12 w-full" ref={titleRef}>
         <div className="text-center">
           <BlurTextAnimation
             text="UFC Leaderboards"
@@ -202,6 +227,8 @@ export default function Leaderboards() {
             fontFamily="font-['Montserrat',_sans-serif]"
             animationDelay={3000}
             className="!min-h-0 !bg-transparent"
+            triggerOnVisible={true}
+            isVisible={titleVisible}
           />
         </div>
       </div>
