@@ -21,6 +21,14 @@ const montserrat = Montserrat({
 export const metadata: Metadata = {
   title: "UFC Elo Calculator",
   description: "UFC Elo Calculator - Track fighter rankings and statistics",
+  icons: {
+    icon: [
+      {
+        url: '/ufc-index-logo.jpg',
+        type: 'image/jpeg',
+      },
+    ],
+  },
 };
 
 export default function RootLayout({

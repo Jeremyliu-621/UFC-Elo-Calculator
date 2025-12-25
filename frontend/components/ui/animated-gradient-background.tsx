@@ -104,6 +104,26 @@ const AnimatedGradientBackground: React.FC<AnimatedGradientBackgroundProps> = ({
    }
 
    const containerRef = useRef<HTMLDivElement | null>(null);
+   const mousePositionRef = useRef({ x: 50, y: 20 });
+   const targetPositionRef = useRef({ x: 50, y: 20 });
+
+   // Track mouse movement
+   useEffect(() => {
+      const handleMouseMove = (e: MouseEvent) => {
+         // Convert mouse position to percentage (0-100)
+         const x = (e.clientX / window.innerWidth) * 100;
+         const y = (e.clientY / window.innerHeight) * 100;
+         
+         // Constrain to a very subtle range (45-55% horizontal, 18-22% vertical)
+         targetPositionRef.current = {
+            x: 45 + (x / 100) * 10, // Maps 0-100% mouse X to 45-55% gradient X
+            y: 18 + (y / 100) * 4, // Maps 0-100% mouse Y to 18-22% gradient Y
+         };
+      };
+
+      window.addEventListener('mousemove', handleMouseMove);
+      return () => window.removeEventListener('mousemove', handleMouseMove);
+   }, []);
 
    useEffect(() => {
       let animationFrame: number;
@@ -117,11 +137,16 @@ const AnimatedGradientBackground: React.FC<AnimatedGradientBackgroundProps> = ({
          if (!Breathing) directionWidth = 0;
          width += directionWidth * animationSpeed;
 
+         // Smoothly interpolate mouse position for subtle movement
+         const lerpFactor = 0.03; // Lower = slower, smoother movement
+         mousePositionRef.current.x += (targetPositionRef.current.x - mousePositionRef.current.x) * lerpFactor;
+         mousePositionRef.current.y += (targetPositionRef.current.y - mousePositionRef.current.y) * lerpFactor;
+
          const gradientStopsString = gradientStops
             .map((stop, index) => `${gradientColors[index]} ${stop}%`)
             .join(", ");
 
-         const gradient = `radial-gradient(${width}% ${width+topOffset}% at 50% 20%, ${gradientStopsString})`;
+         const gradient = `radial-gradient(${width}% ${width+topOffset}% at ${mousePositionRef.current.x}% ${mousePositionRef.current.y}%, ${gradientStopsString})`;
 
          if (containerRef.current) {
             containerRef.current.style.background = gradient;
