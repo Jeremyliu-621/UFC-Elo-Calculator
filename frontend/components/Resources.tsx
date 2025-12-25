@@ -358,9 +358,9 @@ export default function Resources() {
 
   return (
     <div className="relative z-10 px-4 py-8 max-w-7xl mx-auto flex flex-col items-center justify-center min-h-screen">
-      <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-8 mx-auto">
+      <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-8 mx-auto items-center">
         {/* Left Side - Controls and Downloads */}
-        <div className="flex flex-col space-y-6">
+        <div className="flex flex-col space-y-6 justify-center">
           {/* Source Code Title */}
           <div className="space-y-3">
             <h2 className="text-2xl font-light text-white" style={{ fontFamily: 'var(--font-montserrat)' }}>
