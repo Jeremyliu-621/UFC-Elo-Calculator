@@ -1,6 +1,8 @@
 "use client"
 
 import { useEffect, useState } from 'react';
+import { GlowingEffect } from "@/components/ui/glowing-effect";
+import { cn } from "@/lib/utils";
 
 interface EloData {
   fighter: string;
@@ -31,12 +33,22 @@ const LeaderboardRow = ({ rank, name, value }: { rank: number; name: string; val
 );
 
 const LeaderboardSection = ({ title, children }: { title: string; children: React.ReactNode }) => (
-  <div className="bg-black/40 backdrop-blur-sm rounded-lg border border-gray-700/50 overflow-hidden">
-    <div className="bg-gradient-to-r from-red-600/20 to-orange-600/20 px-3 py-2 border-b border-gray-700/50">
-      <h2 className="text-base font-light text-white" style={{ fontFamily: 'var(--font-montserrat)' }}>{title}</h2>
-    </div>
-    <div className="divide-y divide-gray-700/30">
-      {children}
+  <div className={cn("relative rounded-[1.25rem] border-[0.75px] border-gray-700/50 p-2")}>
+    <GlowingEffect
+      spread={40}
+      glow={true}
+      disabled={false}
+      proximity={64}
+      inactiveZone={0.01}
+      borderWidth={3}
+    />
+    <div className="relative flex flex-col overflow-hidden rounded-xl border-[0.75px] border-gray-700/30 bg-black/40 backdrop-blur-sm shadow-sm">
+      <div className="bg-gradient-to-r from-red-600/20 to-orange-600/20 px-3 py-2 border-b border-gray-700/50">
+        <h2 className="text-base font-light text-white" style={{ fontFamily: 'var(--font-montserrat)' }}>{title}</h2>
+      </div>
+      <div className="divide-y divide-gray-700/30">
+        {children}
+      </div>
     </div>
   </div>
 );
