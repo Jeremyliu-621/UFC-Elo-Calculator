@@ -45,9 +45,9 @@ const LeaderboardSection = ({ title, children }: { title: string; children: Reac
       borderWidth={1}
       movementDuration={2}
     />
-    <div className="relative flex flex-col overflow-hidden rounded-xl border-[0.75px] border-gray-700/30 bg-black/40 backdrop-blur-sm shadow-sm min-h-[240px]">
+    <div className="relative flex flex-col overflow-hidden rounded-xl border-[0.75px] border-gray-700/30 bg-black/40 backdrop-blur-sm shadow-sm min-h-[240px] group-hover:bg-gray-800/30 transition-all duration-300">
       <div className="bg-gradient-to-r from-red-600/20 to-orange-600/20 px-4 py-2.5 border-b border-gray-700/50">
-        <h2 className="text-base font-light text-white" style={{ fontFamily: 'var(--font-montserrat)' }}>{title}</h2>
+        <h2 className="text-base font-light text-white group-hover:text-white transition-colors duration-300" style={{ fontFamily: 'var(--font-montserrat)' }}>{title}</h2>
       </div>
       <div className="divide-y divide-gray-700/30 flex-1 overflow-hidden">
         {children}
