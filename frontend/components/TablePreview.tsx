@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { GlowingEffect } from "@/components/ui/glowing-effect";
 import { cn } from "@/lib/utils";
 
@@ -28,26 +29,53 @@ export default function TablePreview({ title, data, isOpen, onClose }: TablePrev
     };
   }, [isOpen]);
 
-  if (!isOpen) return null;
-
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      onClick={onClose}
-    >
-      {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
-      
-      {/* Modal Content */}
-      <div
-        className={cn(
-          "relative w-full max-w-2xl max-h-[80vh] rounded-[1.5rem] border-[0.75px] border-gray-700/50 p-3",
-          "bg-black/90 backdrop-blur-md shadow-2xl",
-          "transform transition-all duration-300",
-          isOpen ? "scale-100 opacity-100" : "scale-95 opacity-0"
-        )}
-        onClick={(e) => e.stopPropagation()}
-      >
+    <AnimatePresence>
+      {isOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          onClick={onClose}
+        >
+          {/* Backdrop */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+          />
+          
+          {/* Modal Content */}
+          <motion.div
+            initial={{ 
+              scaleX: 0,
+              scaleY: 0.8,
+              opacity: 0,
+            }}
+            animate={{ 
+              scaleX: 1,
+              scaleY: 1,
+              opacity: 1,
+            }}
+            exit={{ 
+              scaleX: 0,
+              scaleY: 0.8,
+              opacity: 0,
+            }}
+            transition={{ 
+              duration: 0.5,
+              ease: [0.16, 1, 0.3, 1],
+            }}
+            style={{
+              transformOrigin: 'center',
+            }}
+            className={cn(
+              "relative w-full max-w-2xl max-h-[80vh] rounded-[1.5rem] border-[0.75px] border-gray-700/50 p-3",
+              "bg-black/90 backdrop-blur-md shadow-2xl",
+              "overflow-hidden"
+            )}
+            onClick={(e) => e.stopPropagation()}
+          >
         <GlowingEffect
           spread={20}
           glow={true}
@@ -93,8 +121,10 @@ export default function TablePreview({ title, data, isOpen, onClose }: TablePrev
             ))}
           </div>
         </div>
-      </div>
+      </motion.div>
     </div>
+      )}
+    </AnimatePresence>
   );
 }
 

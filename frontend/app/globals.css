@@ -48,3 +48,27 @@ body {
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 100, 100, 0.5);
 }
+
+/* Custom Scrollbar that appears on hover */
+.custom-scrollbar-hover::-webkit-scrollbar {
+  width: 0px;
+  transition: width 0.3s ease;
+}
+
+.group:hover .custom-scrollbar-hover::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar-hover::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+}
+
+.custom-scrollbar-hover::-webkit-scrollbar-thumb {
+  background: rgba(255, 100, 100, 0.3);
+  border-radius: 4px;
+}
+
+.custom-scrollbar-hover::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 100, 100, 0.5);
+}
