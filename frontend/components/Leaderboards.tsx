@@ -57,7 +57,7 @@ export default function Leaderboards() {
         const elo = await eloRes.json();
         const stats = await statsRes.json();
         
-        setEloData(elo.slice(0, 10)); // Top 10
+        setEloData(elo.slice(0, 5)); // Top 5
         setStatsData(stats);
         setLoading(false);
       } catch (error) {
@@ -78,11 +78,11 @@ export default function Leaderboards() {
   }
 
   // Sort stats for different leaderboards
-  const topWins = [...statsData].sort((a, b) => b.wins - a.wins).slice(0, 10);
-  const topStrikes = [...statsData].sort((a, b) => b.strikes - a.strikes).slice(0, 10);
-  const topTakedowns = [...statsData].sort((a, b) => b.takedowns - a.takedowns).slice(0, 10);
-  const topSubmissions = [...statsData].sort((a, b) => b.submissions - a.submissions).slice(0, 10);
-  const topKnockdowns = [...statsData].sort((a, b) => b.knockdowns - a.knockdowns).slice(0, 10);
+  const topWins = [...statsData].sort((a, b) => b.wins - a.wins).slice(0, 5);
+  const topStrikes = [...statsData].sort((a, b) => b.strikes - a.strikes).slice(0, 5);
+  const topTakedowns = [...statsData].sort((a, b) => b.takedowns - a.takedowns).slice(0, 5);
+  const topSubmissions = [...statsData].sort((a, b) => b.submissions - a.submissions).slice(0, 5);
+  const topKnockdowns = [...statsData].sort((a, b) => b.knockdowns - a.knockdowns).slice(0, 5);
 
   return (
     <div className="relative z-10 px-4 py-8 max-w-7xl mx-auto">
