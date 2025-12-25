@@ -25,8 +25,8 @@ _Winter 2025_
 
 ## Features
 
-Languages: Python, Typescript, Javascript
-Libraries/Frameworks: Next.js, React, TailwindCSS, PostCSS, Pandas, BeautifulSoup
+- Languages: Python, Typescript, Javascript
+- Libraries/Frameworks: Next.js, React, TailwindCSS, PostCSS, Pandas, BeautifulSoup
 
 ## Credits
 
