@@ -8,6 +8,7 @@ const navItems = [
   { label: 'Top 100 Fighters', href: '#elo' },
   { label: 'Ws/STRs/TDs/SUBs', href: '#stats' },
   { label: 'Search for Fighters', href: '#search' },
+  { label: 'Code & Resources', href: '#resources' },
 ];
 
 export default function Navbar() {
@@ -15,7 +16,7 @@ export default function Navbar() {
 
   useEffect(() => {
     const handleScroll = () => {
-      const sections = ['elo', 'stats', 'search'];
+      const sections = ['elo', 'stats', 'search', 'resources'];
       const scrollPosition = window.scrollY + window.innerHeight / 2;
 
       // If we're near the top of the page, default to 'elo'
