@@ -5,7 +5,7 @@ import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
 const Hero = () => {
   return (
-    <div className="relative w-full min-h-screen flex flex-col items-center justify-start px-4 pt-32 text-center">
+    <div className="relative w-full min-h-screen flex flex-col items-center justify-center px-4 text-center">
       {/* Fixed Gradient Background that extends */}
       <div className="fixed inset-0 -z-10">
         <AnimatedGradientBackground Breathing={true} />

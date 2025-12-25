@@ -4,8 +4,12 @@ import Leaderboards from "@/components/Leaderboards";
 export default function Home() {
   return (
     <div className="min-h-screen">
-      <Hero />
-      <Leaderboards />
+      <section className="snap-start min-h-screen">
+        <Hero />
+      </section>
+      <section className="snap-start min-h-screen">
+        <Leaderboards />
+      </section>
     </div>
   );
 }

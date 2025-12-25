@@ -1,7 +1,8 @@
 "use client"
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { GlowingEffect } from "@/components/ui/glowing-effect";
+import BlurTextAnimation from "@/components/blur-text-animation";
 import { cn } from "@/lib/utils";
 
 interface EloData {
@@ -58,6 +59,8 @@ export default function Leaderboards() {
   const [eloData, setEloData] = useState<EloData[]>([]);
   const [statsData, setStatsData] = useState<StatsData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [visibleTables, setVisibleTables] = useState<Set<number>>(new Set());
+  const tableRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -82,6 +85,36 @@ export default function Leaderboards() {
     fetchData();
   }, []);
 
+  // Intersection Observer for progressive table reveal
+  useEffect(() => {
+    const observers: IntersectionObserver[] = [];
+
+    tableRefs.current.forEach((ref, index) => {
+      if (!ref) return;
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              setVisibleTables((prev) => new Set([...prev, index]));
+            }
+          });
+        },
+        {
+          threshold: 0.3,
+          rootMargin: '0px 0px -100px 0px',
+        }
+      );
+
+      observer.observe(ref);
+      observers.push(observer);
+    });
+
+    return () => {
+      observers.forEach((observer) => observer.disconnect());
+    };
+  }, [eloData, statsData]);
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -97,82 +130,66 @@ export default function Leaderboards() {
   const topSubmissions = [...statsData].sort((a, b) => b.submissions - a.submissions).slice(0, 5);
   const topKnockdowns = [...statsData].sort((a, b) => b.knockdowns - a.knockdowns).slice(0, 5);
 
+  const leaderboards = [
+    { title: "Elo Ratings", data: eloData, render: (fighter: EloData, index: number) => (
+      <LeaderboardRow key={fighter.fighter} rank={index + 1} name={fighter.fighter} value={fighter.elo.toFixed(2)} />
+    )},
+    { title: "Most Wins", data: topWins, render: (fighter: StatsData, index: number) => (
+      <LeaderboardRow key={fighter.fighter} rank={index + 1} name={fighter.fighter} value={fighter.wins} />
+    )},
+    { title: "Most Strikes", data: topStrikes, render: (fighter: StatsData, index: number) => (
+      <LeaderboardRow key={fighter.fighter} rank={index + 1} name={fighter.fighter} value={fighter.strikes.toLocaleString()} />
+    )},
+    { title: "Most Takedowns", data: topTakedowns, render: (fighter: StatsData, index: number) => (
+      <LeaderboardRow key={fighter.fighter} rank={index + 1} name={fighter.fighter} value={fighter.takedowns} />
+    )},
+    { title: "Most Submissions", data: topSubmissions, render: (fighter: StatsData, index: number) => (
+      <LeaderboardRow key={fighter.fighter} rank={index + 1} name={fighter.fighter} value={fighter.submissions} />
+    )},
+    { title: "Most Knockdowns", data: topKnockdowns, render: (fighter: StatsData, index: number) => (
+      <LeaderboardRow key={fighter.fighter} rank={index + 1} name={fighter.fighter} value={fighter.knockdowns} />
+    )},
+  ];
+
   return (
-    <div className="relative z-10 px-4 py-8 max-w-7xl mx-auto">
-      <h1 className="text-3xl font-light text-white mb-6 text-center" style={{ fontFamily: 'var(--font-montserrat)' }}>UFC Leaderboards</h1>
+    <div className="relative z-10 px-4 py-8 max-w-7xl mx-auto flex flex-col items-center justify-center min-h-screen">
+      <div className="mb-12 w-full">
+        <div className="text-center">
+          <BlurTextAnimation
+            text="UFC Leaderboards"
+            fontSize="text-3xl md:text-4xl"
+            textColor="text-white"
+            fontFamily="font-['Montserrat',_sans-serif]"
+            animationDelay={3000}
+            className="!min-h-0 !bg-transparent"
+          />
+        </div>
+      </div>
       
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-        {/* Elo Leaderboard */}
-        <LeaderboardSection title="Elo Ratings">
-          {eloData.map((fighter, index) => (
-            <LeaderboardRow
-              key={fighter.fighter}
-              rank={index + 1}
-              name={fighter.fighter}
-              value={fighter.elo.toFixed(2)}
-            />
-          ))}
-        </LeaderboardSection>
-
-        {/* Wins Leaderboard */}
-        <LeaderboardSection title="Most Wins">
-          {topWins.map((fighter, index) => (
-            <LeaderboardRow
-              key={fighter.fighter}
-              rank={index + 1}
-              name={fighter.fighter}
-              value={fighter.wins}
-            />
-          ))}
-        </LeaderboardSection>
-
-        {/* Strikes Leaderboard */}
-        <LeaderboardSection title="Most Strikes">
-          {topStrikes.map((fighter, index) => (
-            <LeaderboardRow
-              key={fighter.fighter}
-              rank={index + 1}
-              name={fighter.fighter}
-              value={fighter.strikes.toLocaleString()}
-            />
-          ))}
-        </LeaderboardSection>
-
-        {/* Takedowns Leaderboard */}
-        <LeaderboardSection title="Most Takedowns">
-          {topTakedowns.map((fighter, index) => (
-            <LeaderboardRow
-              key={fighter.fighter}
-              rank={index + 1}
-              name={fighter.fighter}
-              value={fighter.takedowns}
-            />
-          ))}
-        </LeaderboardSection>
-
-        {/* Submissions Leaderboard */}
-        <LeaderboardSection title="Most Submissions">
-          {topSubmissions.map((fighter, index) => (
-            <LeaderboardRow
-              key={fighter.fighter}
-              rank={index + 1}
-              name={fighter.fighter}
-              value={fighter.submissions}
-            />
-          ))}
-        </LeaderboardSection>
-
-        {/* Knockdowns Leaderboard */}
-        <LeaderboardSection title="Most Knockdowns">
-          {topKnockdowns.map((fighter, index) => (
-            <LeaderboardRow
-              key={fighter.fighter}
-              rank={index + 1}
-              name={fighter.fighter}
-              value={fighter.knockdowns}
-            />
-          ))}
-        </LeaderboardSection>
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 w-full">
+        {leaderboards.map((leaderboard, index) => (
+          <div
+            key={index}
+            ref={(el) => {
+              tableRefs.current[index] = el;
+            }}
+            className={cn(
+              "transition-all duration-1000",
+              visibleTables.has(index)
+                ? "opacity-100 blur-0 scale-100"
+                : "opacity-0 blur-md scale-95"
+            )}
+            style={{
+              transitionDelay: `${index * 100}ms`,
+            }}
+          >
+            <LeaderboardSection title={leaderboard.title}>
+              {leaderboard.data.map((fighter, fighterIndex) =>
+                leaderboard.render(fighter as any, fighterIndex)
+              )}
+            </LeaderboardSection>
+          </div>
+        ))}
       </div>
     </div>
   );
