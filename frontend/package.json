@@ -12,6 +12,7 @@
     "@lottiefiles/dotlottie-react": "^0.17.10",
     "clsx": "^2.1.1",
     "framer-motion": "^12.23.26",
+    "motion": "^12.23.26",
     "next": "16.1.1",
     "react": "19.2.3",
     "react-dom": "19.2.3",

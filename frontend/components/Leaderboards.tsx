@@ -35,12 +35,13 @@ const LeaderboardRow = ({ rank, name, value }: { rank: number; name: string; val
 const LeaderboardSection = ({ title, children }: { title: string; children: React.ReactNode }) => (
   <div className={cn("relative rounded-[1.25rem] border-[0.75px] border-gray-700/50 p-2")}>
     <GlowingEffect
-      spread={40}
+      spread={20}
       glow={true}
       disabled={false}
       proximity={64}
-      inactiveZone={0.01}
-      borderWidth={3}
+      inactiveZone={0.7}
+      borderWidth={1}
+      movementDuration={2}
     />
     <div className="relative flex flex-col overflow-hidden rounded-xl border-[0.75px] border-gray-700/30 bg-black/40 backdrop-blur-sm shadow-sm">
       <div className="bg-gradient-to-r from-red-600/20 to-orange-600/20 px-3 py-2 border-b border-gray-700/50">
