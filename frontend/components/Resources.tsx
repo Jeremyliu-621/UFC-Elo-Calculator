@@ -333,8 +333,8 @@ export default function Resources() {
         </div>
 
         {/* Right Side - Scrollable Code Display */}
-        <div className="flex flex-col w-full">
-          <div className="relative rounded-xl border-[0.75px] border-gray-700/50 bg-gray-900/60 backdrop-blur-sm overflow-hidden h-[80vh] flex flex-col w-full" style={{ minWidth: 0 }}>
+        <div className="flex flex-col" style={{ minWidth: 0, width: '100%', overflow: 'hidden' }}>
+          <div className="relative rounded-xl border-[0.75px] border-gray-700/50 bg-gray-900/60 backdrop-blur-sm overflow-hidden h-[80vh] flex flex-col" style={{ minWidth: 0, width: '100%', maxWidth: '100%' }}>
             {/* Jupyter notebook style header */}
             <div className="bg-gray-800/80 px-4 py-2 border-b border-gray-700/50 flex items-center gap-2 flex-shrink-0">
               <div className="flex gap-1.5">
