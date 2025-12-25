@@ -40,6 +40,7 @@ export default function FighterSearch() {
   const searchRef = useRef<HTMLDivElement>(null);
   const neighborTableRef = useRef<HTMLDivElement>(null);
   const infoCardRef = useRef<HTMLDivElement>(null);
+  const hasInitializedRandomFighter = useRef(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -68,6 +69,27 @@ export default function FighterSearch() {
     fetchData();
   }, []);
 
+  // Select a random fighter on initial load
+  useEffect(() => {
+    if (!loading && !hasInitializedRandomFighter.current && allFighters.length > 0 && eloData.length > 0 && statsData.length > 0) {
+      hasInitializedRandomFighter.current = true;
+      const randomIndex = Math.floor(Math.random() * allFighters.length);
+      const randomFighter = allFighters[randomIndex];
+      
+      // Find fighter data
+      const elo = eloData.find(f => f.fighter === randomFighter);
+      const stats = statsData.find(f => f.fighter === randomFighter);
+      
+      if (elo && stats) {
+        setSelectedFighter({
+          ...stats,
+          elo: elo.elo
+        });
+        setSearchQuery(randomFighter);
+      }
+    }
+  }, [loading, allFighters, eloData, statsData]);
+
   useEffect(() => {
     if (searchQuery.trim() === '') {
       setFilteredFighters([]);
@@ -76,7 +98,7 @@ export default function FighterSearch() {
 
     const filtered = allFighters.filter(fighter =>
       fighter.toLowerCase().includes(searchQuery.toLowerCase())
-    ).slice(0, 10); // Limit to 10 suggestions
+    ).slice(0, 3); // Limit to 3 suggestions
     
     setFilteredFighters(filtered);
     setShowSuggestions(filtered.length > 0);
