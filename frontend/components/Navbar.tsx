@@ -11,12 +11,18 @@ const navItems = [
 ];
 
 export default function Navbar() {
-  const [activeSection, setActiveSection] = useState('');
+  const [activeSection, setActiveSection] = useState('elo'); // Default to 'elo' on initial load
 
   useEffect(() => {
     const handleScroll = () => {
       const sections = ['elo', 'stats', 'search'];
       const scrollPosition = window.scrollY + window.innerHeight / 2;
+
+      // If we're near the top of the page, default to 'elo'
+      if (window.scrollY < 100) {
+        setActiveSection('elo');
+        return;
+      }
 
       for (const section of sections) {
         const element = document.getElementById(section);
@@ -61,7 +67,7 @@ export default function Navbar() {
                   className={cn(
                     "relative rounded-xl border-[0.75px] border-gray-700/50 p-1.5 transition-all duration-300 cursor-pointer group",
                     "hover:scale-105",
-                    isActive && "border-red-600/50"
+                    isActive && "border-gray-700/50"
                   )}
                 >
                   <GlowingEffect
@@ -76,7 +82,7 @@ export default function Navbar() {
                   <div className={cn(
                     "relative flex items-center justify-center rounded-lg border-[0.75px] border-gray-700/30 bg-black/40 backdrop-blur-sm px-5 py-2.5 md:px-6 md:py-3 transition-all duration-300",
                     isActive 
-                      ? "bg-gradient-to-r from-red-600/20 to-orange-600/20" 
+                      ? "bg-gray-800/40 backdrop-blur-md border-gray-700/40" 
                       : "hover:bg-gray-800/30"
                   )}>
                     <span

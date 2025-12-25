@@ -3,6 +3,7 @@
 import AnimatedGradientBackground from "@/components/ui/animated-gradient-background";
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import Navbar from "@/components/Navbar";
+import Link from 'next/link';
 
 const Hero = () => {
   return (
@@ -10,6 +11,19 @@ const Hero = () => {
       {/* Fixed Gradient Background that extends */}
       <div className="fixed inset-0 -z-10">
         <AnimatedGradientBackground Breathing={true} />
+      </div>
+
+      {/* Subtle credit in top right - fixed position */}
+      <div className="fixed z-50" style={{ top: '1.5rem', right: 'calc(1.5rem + 8px)' }}>
+        <Link
+          href="https://github.com/Jeremyliu-621"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-gray-500/60 hover:text-gray-400/80 transition-colors duration-300 text-xs font-light"
+          style={{ fontFamily: 'var(--font-montserrat)' }}
+        >
+          jeremy liu
+        </Link>
       </div>
 
       <div className="relative z-10 flex flex-col items-center pt-12 md:pt-20">

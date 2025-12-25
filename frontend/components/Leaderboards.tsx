@@ -46,7 +46,7 @@ const LeaderboardSection = ({ title, children }: { title: string; children: Reac
       movementDuration={2}
     />
     <div className="relative flex flex-col overflow-hidden rounded-xl border-[0.75px] border-gray-700/30 bg-black/40 backdrop-blur-sm shadow-sm min-h-[240px] group-hover:bg-gray-800/30 transition-all duration-300">
-      <div className="bg-gradient-to-r from-red-600/20 to-orange-600/20 px-4 py-2.5 border-b border-gray-700/50">
+      <div className="bg-gray-800/40 backdrop-blur-md border-b border-gray-700/40 px-4 py-2.5">
         <h2 className="text-base font-light text-white group-hover:text-white transition-colors duration-300" style={{ fontFamily: 'var(--font-montserrat)' }}>{title}</h2>
       </div>
       <div className="divide-y divide-gray-700/30 flex-1 overflow-hidden">
@@ -242,7 +242,7 @@ def update_elo(elo_a, elo_b, score_for_a):
                     movementDuration={2}
                   />
                   <div className="relative flex flex-col overflow-hidden rounded-xl border-[0.75px] border-gray-700/30 bg-black/40 backdrop-blur-sm shadow-sm">
-                    <div className="bg-gradient-to-r from-red-600/20 to-orange-600/20 px-4 py-2.5 border-b border-gray-700/50">
+                    <div className="bg-gray-800/40 backdrop-blur-md border-b border-gray-700/40 px-4 py-2.5">
                       <h2 className="text-base font-light text-white" style={{ fontFamily: 'var(--font-montserrat)' }}>Top 100</h2>
                     </div>
                     <div 
@@ -251,7 +251,7 @@ def update_elo(elo_a, elo_b, score_for_a):
                         overflowY: 'scroll',
                         overflowX: 'hidden',
                         scrollbarWidth: 'thin',
-                        scrollbarColor: 'rgba(255, 100, 100, 0.3) rgba(255, 255, 255, 0.05)',
+                        scrollbarColor: 'rgba(156, 163, 175, 0.6) rgba(55, 65, 81, 0.4)',
                         WebkitOverflowScrolling: 'touch',
                         minHeight: '450px',
                         maxHeight: '450px'

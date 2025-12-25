@@ -87,7 +87,7 @@ export default function TablePreview({ title, data, isOpen, onClose }: TablePrev
         />
         
         {/* Header */}
-        <div className="relative bg-gradient-to-r from-red-600/20 to-orange-600/20 px-4 py-3 rounded-t-xl border-b border-gray-700/50 flex items-center justify-between">
+        <div className="relative bg-gray-800/40 backdrop-blur-md border-b border-gray-700/40 px-4 py-3 rounded-t-xl flex items-center justify-between">
           <h2 className="text-xl font-light text-white" style={{ fontFamily: 'var(--font-montserrat)' }}>
             {title}
           </h2>

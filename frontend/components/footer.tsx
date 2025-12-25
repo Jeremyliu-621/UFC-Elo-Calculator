@@ -1,3 +1,5 @@
+"use client"
+
 import Link from 'next/link'
 import {
     Linkedin,
@@ -7,6 +9,8 @@ import {
     Instagram,
     Code,
 } from 'lucide-react'
+import { GlowingEffect } from "@/components/ui/glowing-effect";
+import { cn } from "@/lib/utils";
 
 const socialLinks = [
     {
@@ -64,14 +68,26 @@ export default function FooterSection() {
                                 target={link.href.startsWith('http') || link.href.startsWith('./') ? '_blank' : undefined}
                                 rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
                                 aria-label={link.ariaLabel}
-                                className="group flex flex-col items-center gap-2 text-gray-300 hover:text-white transition-all duration-300 hover:scale-110"
+                                className="group relative rounded-xl border-[0.75px] border-gray-700/50 p-1.5 transition-all duration-300 cursor-pointer hover:scale-105"
                             >
-                                <div className="p-2 rounded-lg bg-gray-800/50 backdrop-blur-sm group-hover:bg-gray-700/70 transition-colors border border-gray-700/30">
-                                    <Icon className="size-5" />
+                                <GlowingEffect
+                                    spread={20}
+                                    glow={true}
+                                    disabled={false}
+                                    proximity={64}
+                                    inactiveZone={0.7}
+                                    borderWidth={1}
+                                    movementDuration={2}
+                                />
+                                <div className={cn(
+                                    "relative flex flex-col items-center justify-center gap-2 rounded-lg border-[0.75px] border-gray-700/30 bg-black/40 backdrop-blur-sm px-4 py-3 transition-all duration-300",
+                                    "hover:bg-gray-800/30"
+                                )}>
+                                    <Icon className="size-5 text-gray-300 group-hover:text-white transition-colors duration-300" />
+                                    <span className="text-xs font-light text-gray-300 group-hover:text-white transition-colors duration-300" style={{ fontFamily: 'var(--font-montserrat)' }}>
+                                        {link.name}
+                                    </span>
                                 </div>
-                                <span className="text-xs font-light text-gray-200 group-hover:text-white" style={{ fontFamily: 'var(--font-montserrat)' }}>
-                                    {link.name}
-                                </span>
                             </Link>
                         );
                     })}

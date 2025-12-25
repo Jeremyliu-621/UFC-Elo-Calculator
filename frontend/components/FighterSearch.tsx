@@ -199,16 +199,24 @@ export default function FighterSearch() {
       const selectedIndex = neighborFighters.findIndex(f => f.fighter === selectedFighter.fighter);
       if (selectedIndex !== -1) {
         const scrollContainer = neighborTableRef.current;
-        const rowHeight = 50; // Approximate row height
-        const containerHeight = scrollContainer.clientHeight;
-        const scrollPosition = (selectedIndex * rowHeight) - (containerHeight / 2) + (rowHeight / 2);
         
+        // Wait for DOM to render, then calculate actual row height
         setTimeout(() => {
-          scrollContainer.scrollTo({
-            top: Math.max(0, scrollPosition),
-            behavior: 'smooth'
-          });
-        }, 100);
+          const rows = scrollContainer.querySelectorAll('div[class*="border-b"]');
+          if (rows.length > 0) {
+            const firstRow = rows[0] as HTMLElement;
+            const rowHeight = firstRow.offsetHeight;
+            const containerHeight = scrollContainer.clientHeight;
+            
+            // Calculate scroll position to center the selected row
+            const scrollPosition = (selectedIndex * rowHeight) - (containerHeight / 2) + (rowHeight / 2);
+            
+            scrollContainer.scrollTo({
+              top: Math.max(0, scrollPosition),
+              behavior: 'smooth'
+            });
+          }
+        }, 150);
       }
     }
   }, [selectedFighter, neighborFighters]);
@@ -298,7 +306,7 @@ export default function FighterSearch() {
                   movementDuration={2}
                 />
                 <div ref={infoCardRef} className="relative flex flex-col overflow-hidden rounded-xl border-[0.75px] border-gray-700/30 bg-black/40 backdrop-blur-sm shadow-sm">
-                  <div className="bg-gradient-to-r from-red-600/20 to-orange-600/20 px-4 py-3 border-b border-gray-700/50">
+                  <div className="bg-gray-800/40 backdrop-blur-md border-b border-gray-700/40 px-4 py-3">
                     <h2 className="text-xl font-light text-white" style={{ fontFamily: 'var(--font-montserrat)' }}>
                       {selectedFighter.fighter}
                     </h2>
@@ -412,15 +420,15 @@ export default function FighterSearch() {
                   movementDuration={2}
                 />
                 <div className="relative flex flex-col overflow-hidden rounded-xl border-[0.75px] border-gray-700/30 bg-black/40 backdrop-blur-sm shadow-sm" style={{ height: infoCardHeight > 0 ? `${infoCardHeight}px` : 'auto' }}>
-                  <div className="bg-gradient-to-r from-red-600/20 to-orange-600/20 px-4 py-3 border-b border-gray-700/50">
+                  <div className="bg-gray-800/40 backdrop-blur-md border-b border-gray-700/40 px-4 py-3">
                     <h2 className="text-xl font-light text-white" style={{ fontFamily: 'var(--font-montserrat)' }}>Ranking Context</h2>
                   </div>
                   <div 
                     ref={neighborTableRef}
                     className="divide-y divide-gray-700/30 flex-1 custom-scrollbar overflow-y-auto" 
                     style={{ 
-                      scrollbarWidth: 'thin',
-                      scrollbarColor: 'rgba(255, 100, 100, 0.3) rgba(255, 255, 255, 0.05)',
+                        scrollbarWidth: 'thin',
+                        scrollbarColor: 'rgba(156, 163, 175, 0.6) rgba(55, 65, 81, 0.4)',
                       WebkitOverflowScrolling: 'touch'
                     }}
                   >
@@ -434,7 +442,7 @@ export default function FighterSearch() {
                           key={fighter.fighter}
                           className={cn(
                             "flex items-center justify-between py-2 px-4 border-b border-gray-700/30 hover:bg-gray-800/20 transition-colors",
-                            isSelected && "bg-red-600/20"
+                            isSelected && "bg-gray-800/40 backdrop-blur-sm"
                           )}
                         >
                           <div className="flex items-center gap-3">
