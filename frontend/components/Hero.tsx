@@ -19,7 +19,7 @@ const Hero = () => {
             autoplay
           />
         </div>
-        <p className="mt-4 text-lg text-gray-300 md:text-xl max-w-lg">
+        <p className="mt-4 text-lg text-gray-300 md:text-xl max-w-lg font-light" style={{ fontFamily: 'var(--font-montserrat)' }}>
           UFC Elo Calculator - Track fighter rankings and statistics
         </p>
       </div>

@@ -21,21 +21,21 @@ interface StatsData {
 }
 
 const LeaderboardRow = ({ rank, name, value }: { rank: number; name: string; value: number | string }) => (
-  <div className="flex items-center justify-between py-3 px-4 border-b border-gray-700/50 hover:bg-gray-800/30 transition-colors">
-    <div className="flex items-center gap-4">
-      <span className="text-gray-400 font-bold w-8">#{rank}</span>
-      <span className="text-gray-200 font-medium">{name}</span>
+  <div className="flex items-center justify-between py-1.5 px-3 border-b border-gray-700/30 hover:bg-gray-800/20 transition-colors">
+    <div className="flex items-center gap-2">
+      <span className="text-gray-400 font-light text-xs w-5">#{rank}</span>
+      <span className="text-gray-200 font-light text-sm" style={{ fontFamily: 'var(--font-montserrat)' }}>{name}</span>
     </div>
-    <span className="text-gray-300 font-semibold">{value}</span>
+    <span className="text-gray-300 font-light text-sm" style={{ fontFamily: 'var(--font-montserrat)' }}>{value}</span>
   </div>
 );
 
 const LeaderboardSection = ({ title, children }: { title: string; children: React.ReactNode }) => (
-  <div className="bg-black/40 backdrop-blur-sm rounded-lg border border-gray-700/50 overflow-hidden mb-8">
-    <div className="bg-gradient-to-r from-red-600/20 to-orange-600/20 px-6 py-4 border-b border-gray-700/50">
-      <h2 className="text-2xl font-bold text-white">{title}</h2>
+  <div className="bg-black/40 backdrop-blur-sm rounded-lg border border-gray-700/50 overflow-hidden">
+    <div className="bg-gradient-to-r from-red-600/20 to-orange-600/20 px-3 py-2 border-b border-gray-700/50">
+      <h2 className="text-base font-light text-white" style={{ fontFamily: 'var(--font-montserrat)' }}>{title}</h2>
     </div>
-    <div className="divide-y divide-gray-700/50">
+    <div className="divide-y divide-gray-700/30">
       {children}
     </div>
   </div>
@@ -57,7 +57,7 @@ export default function Leaderboards() {
         const elo = await eloRes.json();
         const stats = await statsRes.json();
         
-        setEloData(elo.slice(0, 20)); // Top 20
+        setEloData(elo.slice(0, 10)); // Top 10
         setStatsData(stats);
         setLoading(false);
       } catch (error) {
@@ -72,80 +72,95 @@ export default function Leaderboards() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-gray-300 text-xl">Loading leaderboards...</div>
+        <div className="text-gray-300 text-sm font-light" style={{ fontFamily: 'var(--font-montserrat)' }}>Loading leaderboards...</div>
       </div>
     );
   }
 
   // Sort stats for different leaderboards
-  const topWins = [...statsData].sort((a, b) => b.wins - a.wins).slice(0, 20);
-  const topStrikes = [...statsData].sort((a, b) => b.strikes - a.strikes).slice(0, 20);
-  const topTakedowns = [...statsData].sort((a, b) => b.takedowns - a.takedowns).slice(0, 20);
-  const topSubmissions = [...statsData].sort((a, b) => b.submissions - a.submissions).slice(0, 20);
+  const topWins = [...statsData].sort((a, b) => b.wins - a.wins).slice(0, 10);
+  const topStrikes = [...statsData].sort((a, b) => b.strikes - a.strikes).slice(0, 10);
+  const topTakedowns = [...statsData].sort((a, b) => b.takedowns - a.takedowns).slice(0, 10);
+  const topSubmissions = [...statsData].sort((a, b) => b.submissions - a.submissions).slice(0, 10);
+  const topKnockdowns = [...statsData].sort((a, b) => b.knockdowns - a.knockdowns).slice(0, 10);
 
   return (
-    <div className="relative z-10 px-4 py-16 max-w-6xl mx-auto">
-      <h1 className="text-4xl font-bold text-white mb-12 text-center">UFC Leaderboards</h1>
+    <div className="relative z-10 px-4 py-8 max-w-7xl mx-auto">
+      <h1 className="text-3xl font-light text-white mb-6 text-center" style={{ fontFamily: 'var(--font-montserrat)' }}>UFC Leaderboards</h1>
       
-      {/* Elo Leaderboard */}
-      <LeaderboardSection title="Elo Ratings">
-        {eloData.map((fighter, index) => (
-          <LeaderboardRow
-            key={fighter.fighter}
-            rank={index + 1}
-            name={fighter.fighter}
-            value={fighter.elo.toFixed(2)}
-          />
-        ))}
-      </LeaderboardSection>
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+        {/* Elo Leaderboard */}
+        <LeaderboardSection title="Elo Ratings">
+          {eloData.map((fighter, index) => (
+            <LeaderboardRow
+              key={fighter.fighter}
+              rank={index + 1}
+              name={fighter.fighter}
+              value={fighter.elo.toFixed(2)}
+            />
+          ))}
+        </LeaderboardSection>
 
-      {/* Wins Leaderboard */}
-      <LeaderboardSection title="Most Wins">
-        {topWins.map((fighter, index) => (
-          <LeaderboardRow
-            key={fighter.fighter}
-            rank={index + 1}
-            name={fighter.fighter}
-            value={fighter.wins}
-          />
-        ))}
-      </LeaderboardSection>
+        {/* Wins Leaderboard */}
+        <LeaderboardSection title="Most Wins">
+          {topWins.map((fighter, index) => (
+            <LeaderboardRow
+              key={fighter.fighter}
+              rank={index + 1}
+              name={fighter.fighter}
+              value={fighter.wins}
+            />
+          ))}
+        </LeaderboardSection>
 
-      {/* Strikes Leaderboard */}
-      <LeaderboardSection title="Most Strikes">
-        {topStrikes.map((fighter, index) => (
-          <LeaderboardRow
-            key={fighter.fighter}
-            rank={index + 1}
-            name={fighter.fighter}
-            value={fighter.strikes.toLocaleString()}
-          />
-        ))}
-      </LeaderboardSection>
+        {/* Strikes Leaderboard */}
+        <LeaderboardSection title="Most Strikes">
+          {topStrikes.map((fighter, index) => (
+            <LeaderboardRow
+              key={fighter.fighter}
+              rank={index + 1}
+              name={fighter.fighter}
+              value={fighter.strikes.toLocaleString()}
+            />
+          ))}
+        </LeaderboardSection>
 
-      {/* Takedowns Leaderboard */}
-      <LeaderboardSection title="Most Takedowns">
-        {topTakedowns.map((fighter, index) => (
-          <LeaderboardRow
-            key={fighter.fighter}
-            rank={index + 1}
-            name={fighter.fighter}
-            value={fighter.takedowns}
-          />
-        ))}
-      </LeaderboardSection>
+        {/* Takedowns Leaderboard */}
+        <LeaderboardSection title="Most Takedowns">
+          {topTakedowns.map((fighter, index) => (
+            <LeaderboardRow
+              key={fighter.fighter}
+              rank={index + 1}
+              name={fighter.fighter}
+              value={fighter.takedowns}
+            />
+          ))}
+        </LeaderboardSection>
 
-      {/* Submissions Leaderboard */}
-      <LeaderboardSection title="Most Submissions">
-        {topSubmissions.map((fighter, index) => (
-          <LeaderboardRow
-            key={fighter.fighter}
-            rank={index + 1}
-            name={fighter.fighter}
-            value={fighter.submissions}
-          />
-        ))}
-      </LeaderboardSection>
+        {/* Submissions Leaderboard */}
+        <LeaderboardSection title="Most Submissions">
+          {topSubmissions.map((fighter, index) => (
+            <LeaderboardRow
+              key={fighter.fighter}
+              rank={index + 1}
+              name={fighter.fighter}
+              value={fighter.submissions}
+            />
+          ))}
+        </LeaderboardSection>
+
+        {/* Knockdowns Leaderboard */}
+        <LeaderboardSection title="Most Knockdowns">
+          {topKnockdowns.map((fighter, index) => (
+            <LeaderboardRow
+              key={fighter.fighter}
+              rank={index + 1}
+              name={fighter.fighter}
+              value={fighter.knockdowns}
+            />
+          ))}
+        </LeaderboardSection>
+      </div>
     </div>
   );
 }
