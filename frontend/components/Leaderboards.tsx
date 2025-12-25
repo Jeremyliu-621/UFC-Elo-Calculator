@@ -78,7 +78,7 @@ export default function Leaderboards() {
         const stats = await statsRes.json();
         
         setFullEloData(elo);
-        setEloData(elo.slice(0, 20)); // Top 20
+        setEloData(elo.slice(0, 100)); // Top 100
         setStatsData(stats);
         setLoading(false);
       } catch (error) {
@@ -143,7 +143,7 @@ export default function Leaderboards() {
   const eloLeaderboard = {
     title: "Elo Ratings", 
     previewData: fullEloData.map(f => ({ fighter: f.fighter, value: f.elo.toFixed(2) })),
-    data: eloData, 
+    data: fullEloData.slice(0, 100), // Use full data for top 100 
     render: (fighter: EloData, index: number) => (
       <LeaderboardRow key={fighter.fighter} rank={index + 1} name={fighter.fighter} value={fighter.elo.toFixed(2)} />
     )
@@ -230,23 +230,6 @@ def update_elo(elo_a, elo_b, score_for_a):
                     : "opacity-0 blur-md scale-95"
                 )}
                 onClick={() => handleTableClick(eloLeaderboard.title, eloLeaderboard.previewData)}
-                onWheel={(e) => {
-                  const target = e.currentTarget;
-                  const scrollableDiv = target.querySelector('.elo-table-scrollable') as HTMLElement;
-                  if (scrollableDiv) {
-                    const { scrollTop, scrollHeight, clientHeight } = scrollableDiv;
-                    const isAtTop = scrollTop === 0;
-                    const isAtBottom = scrollTop + clientHeight >= scrollHeight - 1;
-                    
-                    if ((e.deltaY < 0 && isAtTop) || (e.deltaY > 0 && isAtBottom)) {
-                      // Allow page scroll only at boundaries
-                      return;
-                    }
-                    // Prevent page scroll and scroll within table
-                    e.preventDefault();
-                    scrollableDiv.scrollTop += e.deltaY;
-                  }
-                }}
               >
                 <div className={cn("relative rounded-[1.25rem] border-[0.75px] border-gray-700/50 p-3")}>
                   <GlowingEffect
@@ -260,10 +243,21 @@ def update_elo(elo_a, elo_b, score_for_a):
                   />
                   <div className="relative flex flex-col overflow-hidden rounded-xl border-[0.75px] border-gray-700/30 bg-black/40 backdrop-blur-sm shadow-sm">
                     <div className="bg-gradient-to-r from-red-600/20 to-orange-600/20 px-4 py-2.5 border-b border-gray-700/50">
-                      <h2 className="text-base font-light text-white" style={{ fontFamily: 'var(--font-montserrat)' }}>Top 10</h2>
+                      <h2 className="text-base font-light text-white" style={{ fontFamily: 'var(--font-montserrat)' }}>Top 100</h2>
                     </div>
-                    <div className="elo-table-scrollable divide-y divide-gray-700/30 max-h-[600px] overflow-y-hidden group-hover:overflow-y-auto custom-scrollbar-hover">
-                      {eloLeaderboard.data.slice(0, 10).map((fighter, fighterIndex) =>
+                    <div 
+                      className="divide-y divide-gray-700/30 h-[450px] custom-scrollbar" 
+                      style={{ 
+                        overflowY: 'scroll',
+                        overflowX: 'hidden',
+                        scrollbarWidth: 'thin',
+                        scrollbarColor: 'rgba(255, 100, 100, 0.3) rgba(255, 255, 255, 0.05)',
+                        WebkitOverflowScrolling: 'touch',
+                        minHeight: '450px',
+                        maxHeight: '450px'
+                      }}
+                    >
+                      {eloLeaderboard.data.slice(0, 100).map((fighter, fighterIndex) =>
                         eloLeaderboard.render(fighter, fighterIndex)
                       )}
                     </div>
