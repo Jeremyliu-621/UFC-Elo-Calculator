@@ -5,9 +5,9 @@ import { cn } from "@/lib/utils";
 import { GlowingEffect } from "@/components/ui/glowing-effect";
 
 const navItems = [
-  { label: 'Elo Ratings', href: '#elo' },
-  { label: 'Fighter Statistics', href: '#stats' },
-  { label: 'Fighter Search', href: '#search' },
+  { label: 'Top 100 Fighters', href: '#elo' },
+  { label: 'Ws/STRs/TDs/SUBs', href: '#stats' },
+  { label: 'Search for Fighters', href: '#search' },
 ];
 
 export default function Navbar() {

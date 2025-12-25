@@ -36,7 +36,10 @@ export default function FighterSearch() {
   const [statsData, setStatsData] = useState<StatsData[]>([]);
   const [loading, setLoading] = useState(true);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [infoCardHeight, setInfoCardHeight] = useState<number>(0);
   const searchRef = useRef<HTMLDivElement>(null);
+  const neighborTableRef = useRef<HTMLDivElement>(null);
+  const infoCardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -149,6 +152,67 @@ export default function FighterSearch() {
     }
   };
 
+  // Get neighbors (fighters around the selected one) - must be before early returns
+  const neighborFighters = useMemo(() => {
+    if (!selectedFighter || eloData.length === 0) return [];
+    
+    const sortedElo = [...eloData].sort((a, b) => b.elo - a.elo);
+    const currentIndex = sortedElo.findIndex(f => f.fighter === selectedFighter.fighter);
+    
+    if (currentIndex === -1) return [];
+    
+    const neighbors: EloData[] = [];
+    const fightersToShow = 100; // Show 50 above, selected, 50 below
+    
+    // Calculate start and end indices
+    let startIndex = Math.max(0, currentIndex - 50);
+    let endIndex = Math.min(sortedElo.length - 1, currentIndex + 50);
+    
+    // Adjust if we're near the top
+    if (currentIndex < 50) {
+      endIndex = Math.min(sortedElo.length - 1, startIndex + fightersToShow - 1);
+    }
+    // Adjust if we're near the bottom
+    if (currentIndex > sortedElo.length - 51) {
+      startIndex = Math.max(0, endIndex - fightersToShow + 1);
+    }
+    
+    // Add fighters
+    for (let i = startIndex; i <= endIndex; i++) {
+      neighbors.push(sortedElo[i]);
+    }
+    
+    return neighbors;
+  }, [selectedFighter, eloData]);
+
+  // Measure info card height and match ranking context
+  useEffect(() => {
+    if (infoCardRef.current) {
+      const height = infoCardRef.current.offsetHeight;
+      setInfoCardHeight(height);
+    }
+  }, [selectedFighter]);
+
+  // Scroll to selected fighter in neighbor table - must be after neighborFighters is defined
+  useEffect(() => {
+    if (selectedFighter && neighborTableRef.current && neighborFighters.length > 0) {
+      const selectedIndex = neighborFighters.findIndex(f => f.fighter === selectedFighter.fighter);
+      if (selectedIndex !== -1) {
+        const scrollContainer = neighborTableRef.current;
+        const rowHeight = 50; // Approximate row height
+        const containerHeight = scrollContainer.clientHeight;
+        const scrollPosition = (selectedIndex * rowHeight) - (containerHeight / 2) + (rowHeight / 2);
+        
+        setTimeout(() => {
+          scrollContainer.scrollTo({
+            top: Math.max(0, scrollPosition),
+            behavior: 'smooth'
+          });
+        }, 100);
+      }
+    }
+  }, [selectedFighter, neighborFighters]);
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -161,7 +225,7 @@ export default function FighterSearch() {
 
   return (
     <div className="relative z-10 px-4 py-8 max-w-7xl mx-auto flex items-center justify-center min-h-screen">
-      <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-8 h-[85vh]">
+      <div className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-3 gap-6 h-[85vh]">
         {/* Left Side - Search */}
         <div className="flex flex-col items-center justify-center">
           <div className="w-full max-w-md" ref={searchRef}>
@@ -219,10 +283,10 @@ export default function FighterSearch() {
           </div>
         </div>
 
-        {/* Right Side - Fighter Info */}
+        {/* Middle - Fighter Info */}
         <div className="flex flex-col items-center justify-center">
           {selectedFighter ? (
-            <div className="w-full max-w-md">
+            <div className="w-full max-w-sm">
               <div className={cn("relative rounded-[1.25rem] border-[0.75px] border-gray-700/50 p-4")}>
                 <GlowingEffect
                   spread={20}
@@ -233,7 +297,7 @@ export default function FighterSearch() {
                   borderWidth={1}
                   movementDuration={2}
                 />
-                <div className="relative flex flex-col overflow-hidden rounded-xl border-[0.75px] border-gray-700/30 bg-black/40 backdrop-blur-sm shadow-sm">
+                <div ref={infoCardRef} className="relative flex flex-col overflow-hidden rounded-xl border-[0.75px] border-gray-700/30 bg-black/40 backdrop-blur-sm shadow-sm">
                   <div className="bg-gradient-to-r from-red-600/20 to-orange-600/20 px-4 py-3 border-b border-gray-700/50">
                     <h2 className="text-xl font-light text-white" style={{ fontFamily: 'var(--font-montserrat)' }}>
                       {selectedFighter.fighter}
@@ -328,6 +392,77 @@ export default function FighterSearch() {
             <div className="text-center">
               <p className="text-gray-400 font-light text-sm" style={{ fontFamily: 'var(--font-montserrat)' }}>
                 Search for a fighter to view their information
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Right Side - Neighbor Table */}
+        <div className="flex flex-col items-center justify-center">
+          {selectedFighter && neighborFighters.length > 0 ? (
+            <div className="w-full max-w-sm">
+              <div className={cn("relative rounded-[1.25rem] border-[0.75px] border-gray-700/50 p-4")}>
+                <GlowingEffect
+                  spread={20}
+                  glow={true}
+                  disabled={false}
+                  proximity={64}
+                  inactiveZone={0.7}
+                  borderWidth={1}
+                  movementDuration={2}
+                />
+                <div className="relative flex flex-col overflow-hidden rounded-xl border-[0.75px] border-gray-700/30 bg-black/40 backdrop-blur-sm shadow-sm" style={{ height: infoCardHeight > 0 ? `${infoCardHeight}px` : 'auto' }}>
+                  <div className="bg-gradient-to-r from-red-600/20 to-orange-600/20 px-4 py-3 border-b border-gray-700/50">
+                    <h2 className="text-xl font-light text-white" style={{ fontFamily: 'var(--font-montserrat)' }}>Ranking Context</h2>
+                  </div>
+                  <div 
+                    ref={neighborTableRef}
+                    className="divide-y divide-gray-700/30 flex-1 custom-scrollbar overflow-y-auto" 
+                    style={{ 
+                      scrollbarWidth: 'thin',
+                      scrollbarColor: 'rgba(255, 100, 100, 0.3) rgba(255, 255, 255, 0.05)',
+                      WebkitOverflowScrolling: 'touch'
+                    }}
+                  >
+                    {neighborFighters.map((fighter, index) => {
+                      const sortedElo = [...eloData].sort((a, b) => b.elo - a.elo);
+                      const fighterIndex = sortedElo.findIndex(f => f.fighter === fighter.fighter);
+                      const rank = fighterIndex !== -1 ? fighterIndex + 1 : 0;
+                      const isSelected = fighter.fighter === selectedFighter.fighter;
+                      return (
+                        <div
+                          key={fighter.fighter}
+                          className={cn(
+                            "flex items-center justify-between py-2 px-4 border-b border-gray-700/30 hover:bg-gray-800/20 transition-colors",
+                            isSelected && "bg-red-600/20"
+                          )}
+                        >
+                          <div className="flex items-center gap-3">
+                            <span className="text-gray-400 font-light text-sm w-12">#{rank}</span>
+                            <span className={cn(
+                              "font-light text-sm",
+                              isSelected ? "text-white" : "text-gray-200"
+                            )} style={{ fontFamily: 'var(--font-montserrat)' }}>
+                              {fighter.fighter}
+                            </span>
+                          </div>
+                          <span className={cn(
+                            "font-light text-sm",
+                            isSelected ? "text-white" : "text-gray-300"
+                          )} style={{ fontFamily: 'var(--font-montserrat)' }}>
+                            {fighter.elo.toFixed(2)}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="text-center">
+              <p className="text-gray-400 font-light text-sm" style={{ fontFamily: 'var(--font-montserrat)' }}>
+                Search for a fighter to see ranking context
               </p>
             </div>
           )}
