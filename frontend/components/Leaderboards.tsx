@@ -56,7 +56,7 @@ const LeaderboardSection = ({ title, children }: { title: string; children: Reac
   </div>
 );
 
-const StatsFilter = ({ selectedFilter, onFilterChange }: { selectedFilter: string | null; onFilterChange: (filter: string | null) => void }) => {
+const StatsFilter = ({ selectedFilter, onFilterChange }: { selectedFilter: string; onFilterChange: (filter: string) => void }) => {
   const filterOptions = [
     { id: 'all', label: 'All' },
     { id: 'wins', label: 'Wins' },
