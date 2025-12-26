@@ -254,12 +254,12 @@ export default function FighterSearch() {
   }
 
   return (
-    <div className="relative z-10 px-4 py-8 max-w-7xl mx-auto flex items-center justify-center min-h-screen">
-      <div className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-3 gap-6 h-[85vh]">
+    <div className="relative z-10 px-2 sm:px-4 py-4 sm:py-8 max-w-7xl mx-auto flex items-center justify-center min-h-screen">
+      <div className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 min-h-[85vh] lg:h-[85vh]">
         {/* Left Side - Search */}
         <div className="flex flex-col items-center justify-center">
           <div className="w-full max-w-md" ref={searchRef}>
-            <h2 className="text-2xl font-light text-white mb-6 text-center" style={{ fontFamily: 'var(--font-montserrat)' }}>
+            <h2 className="text-xl sm:text-2xl font-light text-white mb-4 sm:mb-6 text-center" style={{ fontFamily: 'var(--font-montserrat)' }}>
               Search Fighter
             </h2>
             
@@ -274,8 +274,8 @@ export default function FighterSearch() {
                   borderWidth={1}
                   movementDuration={2}
                 />
-                <div className="relative flex items-center gap-3 rounded-xl border-[0.75px] border-gray-700/30 bg-black/40 backdrop-blur-sm px-4 py-3">
-                  <Search className="w-5 h-5 text-gray-400" />
+                  <div className="relative flex items-center gap-2 sm:gap-3 rounded-xl border-[0.75px] border-gray-700/30 bg-black/40 backdrop-blur-sm px-3 sm:px-4 py-2.5 sm:py-3">
+                  <Search className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 flex-shrink-0" />
                   <input
                     type="text"
                     value={searchQuery}
@@ -287,7 +287,7 @@ export default function FighterSearch() {
                       }
                     }}
                     placeholder="Enter fighter name..."
-                    className="flex-1 bg-transparent text-white placeholder-gray-500 outline-none font-light text-sm"
+                    className="flex-1 bg-transparent text-white placeholder-gray-500 outline-none font-light text-xs sm:text-sm min-w-0"
                     style={{ fontFamily: 'var(--font-montserrat)' }}
                   />
                 </div>
@@ -328,86 +328,86 @@ export default function FighterSearch() {
                   movementDuration={2}
                 />
                 <div ref={infoCardRef} className="relative flex flex-col overflow-hidden rounded-xl border-[0.75px] border-gray-700/30 bg-black/40 backdrop-blur-sm shadow-sm">
-                  <div className="bg-gray-800/40 backdrop-blur-md border-b border-gray-700/40 px-4 py-3">
-                    <h2 className="text-xl font-light text-white" style={{ fontFamily: 'var(--font-montserrat)' }}>
+                  <div className="bg-gray-800/40 backdrop-blur-md border-b border-gray-700/40 px-3 sm:px-4 py-2.5 sm:py-3">
+                    <h2 className="text-lg sm:text-xl font-light text-white truncate" style={{ fontFamily: 'var(--font-montserrat)' }}>
                       {selectedFighter.fighter}
                     </h2>
                   </div>
                   
-                  <div className="p-5 space-y-5">
+                  <div className="p-3 sm:p-5 space-y-4 sm:space-y-5">
                     {/* Elo Rating */}
-                    <div className="border-b border-gray-700/30 pb-4">
-                      <div className="flex justify-between items-center mb-2">
-                        <span className="text-gray-400 font-light text-base" style={{ fontFamily: 'var(--font-montserrat)' }}>
+                    <div className="border-b border-gray-700/30 pb-3 sm:pb-4">
+                      <div className="flex justify-between items-center mb-2 gap-2">
+                        <span className="text-gray-400 font-light text-sm sm:text-base" style={{ fontFamily: 'var(--font-montserrat)' }}>
                           Elo Rating
                         </span>
-                        <span className="text-white font-light text-2xl" style={{ fontFamily: 'var(--font-montserrat)' }}>
+                        <span className="text-white font-light text-xl sm:text-2xl flex-shrink-0" style={{ fontFamily: 'var(--font-montserrat)' }}>
                           {selectedFighter.elo.toFixed(2)}
                         </span>
                       </div>
-                      <div className="text-gray-500 font-light text-sm" style={{ fontFamily: 'var(--font-montserrat)' }}>
+                      <div className="text-gray-500 font-light text-xs sm:text-sm" style={{ fontFamily: 'var(--font-montserrat)' }}>
                         Ranked #{eloRankings.find(r => r.fighter === selectedFighter.fighter)?.rank || 'N/A'}
                       </div>
                     </div>
 
                     {/* Fight Record */}
-                    <div className="space-y-3">
-                      <h3 className="text-gray-300 font-light text-base mb-3" style={{ fontFamily: 'var(--font-montserrat)' }}>
+                    <div className="space-y-2 sm:space-y-3">
+                      <h3 className="text-gray-300 font-light text-sm sm:text-base mb-2 sm:mb-3" style={{ fontFamily: 'var(--font-montserrat)' }}>
                         Fight Record
                       </h3>
-                      <div className="grid grid-cols-2 gap-3">
-                        <div className="flex justify-between">
-                          <span className="text-gray-400 font-light text-sm" style={{ fontFamily: 'var(--font-montserrat)' }}>Fights:</span>
-                          <span className="text-gray-200 font-light text-sm" style={{ fontFamily: 'var(--font-montserrat)' }}>{selectedFighter.fights}</span>
+                      <div className="grid grid-cols-2 gap-2 sm:gap-3">
+                        <div className="flex justify-between gap-2">
+                          <span className="text-gray-400 font-light text-xs sm:text-sm" style={{ fontFamily: 'var(--font-montserrat)' }}>Fights:</span>
+                          <span className="text-gray-200 font-light text-xs sm:text-sm flex-shrink-0" style={{ fontFamily: 'var(--font-montserrat)' }}>{selectedFighter.fights}</span>
                         </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-400 font-light text-sm" style={{ fontFamily: 'var(--font-montserrat)' }}>Wins:</span>
-                          <span className="text-green-400 font-light text-sm" style={{ fontFamily: 'var(--font-montserrat)' }}>{selectedFighter.wins}</span>
+                        <div className="flex justify-between gap-2">
+                          <span className="text-gray-400 font-light text-xs sm:text-sm" style={{ fontFamily: 'var(--font-montserrat)' }}>Wins:</span>
+                          <span className="text-green-400 font-light text-xs sm:text-sm flex-shrink-0" style={{ fontFamily: 'var(--font-montserrat)' }}>{selectedFighter.wins}</span>
                         </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-400 font-light text-sm" style={{ fontFamily: 'var(--font-montserrat)' }}>Losses:</span>
-                          <span className="text-red-400 font-light text-sm" style={{ fontFamily: 'var(--font-montserrat)' }}>{selectedFighter.losses}</span>
+                        <div className="flex justify-between gap-2">
+                          <span className="text-gray-400 font-light text-xs sm:text-sm" style={{ fontFamily: 'var(--font-montserrat)' }}>Losses:</span>
+                          <span className="text-red-400 font-light text-xs sm:text-sm flex-shrink-0" style={{ fontFamily: 'var(--font-montserrat)' }}>{selectedFighter.losses}</span>
                         </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-400 font-light text-sm" style={{ fontFamily: 'var(--font-montserrat)' }}>Draws:</span>
-                          <span className="text-gray-200 font-light text-sm" style={{ fontFamily: 'var(--font-montserrat)' }}>{selectedFighter.draws}</span>
+                        <div className="flex justify-between gap-2">
+                          <span className="text-gray-400 font-light text-xs sm:text-sm" style={{ fontFamily: 'var(--font-montserrat)' }}>Draws:</span>
+                          <span className="text-gray-200 font-light text-xs sm:text-sm flex-shrink-0" style={{ fontFamily: 'var(--font-montserrat)' }}>{selectedFighter.draws}</span>
                         </div>
                       </div>
                     </div>
 
                     {/* Statistics */}
-                    <div className="space-y-3 pt-3 border-t border-gray-700/30">
-                      <h3 className="text-gray-300 font-light text-base mb-3" style={{ fontFamily: 'var(--font-montserrat)' }}>
+                    <div className="space-y-2 sm:space-y-3 pt-3 border-t border-gray-700/30">
+                      <h3 className="text-gray-300 font-light text-sm sm:text-base mb-2 sm:mb-3" style={{ fontFamily: 'var(--font-montserrat)' }}>
                         Statistics
                       </h3>
-                      <div className="space-y-2.5">
-                        <div className="flex justify-between items-center">
-                          <span className="text-gray-400 font-light text-sm" style={{ fontFamily: 'var(--font-montserrat)' }}>Strikes:</span>
-                          <div className="flex items-center gap-2">
-                            <span className="text-gray-200 font-light text-sm" style={{ fontFamily: 'var(--font-montserrat)' }}>{selectedFighter.strikes.toLocaleString()}</span>
-                            <span className="text-gray-500 font-light text-xs" style={{ fontFamily: 'var(--font-montserrat)' }}>
+                      <div className="space-y-2 sm:space-y-2.5">
+                        <div className="flex justify-between items-center gap-2">
+                          <span className="text-gray-400 font-light text-xs sm:text-sm" style={{ fontFamily: 'var(--font-montserrat)' }}>Strikes:</span>
+                          <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+                            <span className="text-gray-200 font-light text-xs sm:text-sm" style={{ fontFamily: 'var(--font-montserrat)' }}>{selectedFighter.strikes.toLocaleString()}</span>
+                            <span className="text-gray-500 font-light text-[10px] sm:text-xs" style={{ fontFamily: 'var(--font-montserrat)' }}>
                               (#{strikesRankings.find(r => r.fighter === selectedFighter.fighter)?.rank || 'N/A'})
                             </span>
                           </div>
                         </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-gray-400 font-light text-sm" style={{ fontFamily: 'var(--font-montserrat)' }}>Takedowns:</span>
-                          <div className="flex items-center gap-2">
-                            <span className="text-gray-200 font-light text-sm" style={{ fontFamily: 'var(--font-montserrat)' }}>{selectedFighter.takedowns}</span>
-                            <span className="text-gray-500 font-light text-xs" style={{ fontFamily: 'var(--font-montserrat)' }}>
+                        <div className="flex justify-between items-center gap-2">
+                          <span className="text-gray-400 font-light text-xs sm:text-sm" style={{ fontFamily: 'var(--font-montserrat)' }}>Takedowns:</span>
+                          <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+                            <span className="text-gray-200 font-light text-xs sm:text-sm" style={{ fontFamily: 'var(--font-montserrat)' }}>{selectedFighter.takedowns}</span>
+                            <span className="text-gray-500 font-light text-[10px] sm:text-xs" style={{ fontFamily: 'var(--font-montserrat)' }}>
                               (#{takedownsRankings.find(r => r.fighter === selectedFighter.fighter)?.rank || 'N/A'})
                             </span>
                           </div>
                         </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-400 font-light text-sm" style={{ fontFamily: 'var(--font-montserrat)' }}>Submissions:</span>
-                          <span className="text-gray-200 font-light text-sm" style={{ fontFamily: 'var(--font-montserrat)' }}>{selectedFighter.submissions}</span>
+                        <div className="flex justify-between gap-2">
+                          <span className="text-gray-400 font-light text-xs sm:text-sm" style={{ fontFamily: 'var(--font-montserrat)' }}>Submissions:</span>
+                          <span className="text-gray-200 font-light text-xs sm:text-sm flex-shrink-0" style={{ fontFamily: 'var(--font-montserrat)' }}>{selectedFighter.submissions}</span>
                         </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-gray-400 font-light text-sm" style={{ fontFamily: 'var(--font-montserrat)' }}>Knockdowns:</span>
-                          <div className="flex items-center gap-2">
-                            <span className="text-gray-200 font-light text-sm" style={{ fontFamily: 'var(--font-montserrat)' }}>{selectedFighter.knockdowns}</span>
-                            <span className="text-gray-500 font-light text-xs" style={{ fontFamily: 'var(--font-montserrat)' }}>
+                        <div className="flex justify-between items-center gap-2">
+                          <span className="text-gray-400 font-light text-xs sm:text-sm" style={{ fontFamily: 'var(--font-montserrat)' }}>Knockdowns:</span>
+                          <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+                            <span className="text-gray-200 font-light text-xs sm:text-sm" style={{ fontFamily: 'var(--font-montserrat)' }}>{selectedFighter.knockdowns}</span>
+                            <span className="text-gray-500 font-light text-[10px] sm:text-xs" style={{ fontFamily: 'var(--font-montserrat)' }}>
                               (#{knockdownsRankings.find(r => r.fighter === selectedFighter.fighter)?.rank || 'N/A'})
                             </span>
                           </div>
@@ -442,8 +442,8 @@ export default function FighterSearch() {
                   movementDuration={2}
                 />
                 <div className="relative flex flex-col overflow-hidden rounded-xl border-[0.75px] border-gray-700/30 bg-black/40 backdrop-blur-sm shadow-sm" style={{ height: infoCardHeight > 0 ? `${infoCardHeight}px` : 'auto' }}>
-                  <div className="bg-gray-800/40 backdrop-blur-md border-b border-gray-700/40 px-4 py-3">
-                    <h2 className="text-xl font-light text-white" style={{ fontFamily: 'var(--font-montserrat)' }}>Ranking Context</h2>
+                  <div className="bg-gray-800/40 backdrop-blur-md border-b border-gray-700/40 px-3 sm:px-4 py-2.5 sm:py-3">
+                    <h2 className="text-lg sm:text-xl font-light text-white" style={{ fontFamily: 'var(--font-montserrat)' }}>Ranking Context</h2>
                   </div>
                   <div 
                     ref={neighborTableRef}
@@ -463,21 +463,21 @@ export default function FighterSearch() {
                         <div
                           key={fighter.fighter}
                           className={cn(
-                            "flex items-center justify-between py-2 px-4 border-b border-gray-700/30 hover:bg-gray-800/20 transition-colors",
+                            "flex items-center justify-between py-2 px-2 sm:px-4 border-b border-gray-700/30 hover:bg-gray-800/20 transition-colors gap-2",
                             isSelected && "bg-gray-800/40 backdrop-blur-sm"
                           )}
                         >
-                          <div className="flex items-center gap-3">
-                            <span className="text-gray-400 font-light text-sm w-12">#{rank}</span>
+                          <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+                            <span className="text-gray-400 font-light text-xs sm:text-sm w-8 sm:w-12 flex-shrink-0">#{rank}</span>
                             <span className={cn(
-                              "font-light text-sm",
+                              "font-light text-xs sm:text-sm truncate",
                               isSelected ? "text-white" : "text-gray-200"
                             )} style={{ fontFamily: 'var(--font-montserrat)' }}>
                               {fighter.fighter}
                             </span>
                           </div>
                           <span className={cn(
-                            "font-light text-sm",
+                            "font-light text-xs sm:text-sm flex-shrink-0",
                             isSelected ? "text-white" : "text-gray-300"
                           )} style={{ fontFamily: 'var(--font-montserrat)' }}>
                             {fighter.elo.toFixed(2)}

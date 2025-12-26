@@ -24,18 +24,34 @@ interface StatsData {
   submissions: number;
 }
 
-const LeaderboardRow = ({ rank, name, value }: { rank: number; name: string; value: number | string }) => (
-  <div className="flex items-center justify-between py-2 px-4 border-b border-gray-700/30 hover:bg-gray-800/20 transition-colors">
-    <div className="flex items-center gap-3">
-      <span className="text-gray-400 font-light text-sm w-6">#{rank}</span>
-      <span className="text-gray-200 font-light text-sm" style={{ fontFamily: 'var(--font-montserrat)' }}>{name}</span>
+const LeaderboardRow = ({ rank, name, value, compact }: { rank: number; name: string; value: number | string; compact?: boolean }) => (
+  <div className={cn(
+    "flex items-center justify-between border-b border-gray-700/30 hover:bg-gray-800/20 transition-colors gap-2",
+    compact 
+      ? "py-1.5 sm:py-2 px-2 sm:px-3" 
+      : "py-2 lg:py-2.5 xl:py-3 px-2 sm:px-4 lg:px-5 xl:px-6"
+  )}>
+    <div className={cn("flex items-center min-w-0 flex-1", compact ? "gap-2" : "gap-2 sm:gap-3 lg:gap-4")}>
+      <span className={cn(
+        "text-gray-400 font-light flex-shrink-0",
+        compact 
+          ? "text-xs w-4 sm:w-5" 
+          : "text-xs sm:text-sm lg:text-base w-5 sm:w-6 lg:w-8"
+      )}>#{rank}</span>
+      <span className={cn(
+        "text-gray-200 font-light truncate",
+        compact ? "text-xs sm:text-sm" : "text-xs sm:text-sm lg:text-base"
+      )} style={{ fontFamily: 'var(--font-montserrat)' }}>{name}</span>
     </div>
-    <span className="text-gray-300 font-light text-sm" style={{ fontFamily: 'var(--font-montserrat)' }}>{value}</span>
+    <span className={cn(
+      "text-gray-300 font-light flex-shrink-0",
+      compact ? "text-xs sm:text-sm" : "text-xs sm:text-sm lg:text-base"
+    )} style={{ fontFamily: 'var(--font-montserrat)' }}>{value}</span>
   </div>
 );
 
 const LeaderboardSection = ({ title, children }: { title: string; children: React.ReactNode }) => (
-  <div className={cn("relative rounded-[1.25rem] border-[0.75px] border-gray-700/50 p-3")}>
+  <div className={cn("relative rounded-[1.25rem] border-[0.75px] border-gray-700/50 p-2 sm:p-3")}>
     <GlowingEffect
       spread={20}
       glow={true}
@@ -45,9 +61,9 @@ const LeaderboardSection = ({ title, children }: { title: string; children: Reac
       borderWidth={1}
       movementDuration={2}
     />
-    <div className="relative flex flex-col overflow-hidden rounded-xl border-[0.75px] border-gray-700/30 bg-black/40 backdrop-blur-sm shadow-sm min-h-[240px] group-hover:bg-gray-800/30 transition-all duration-300">
-      <div className="bg-gray-800/40 backdrop-blur-md border-b border-gray-700/40 px-4 py-2.5">
-        <h2 className="text-base font-light text-white group-hover:text-white transition-colors duration-300" style={{ fontFamily: 'var(--font-montserrat)' }}>{title}</h2>
+    <div className="relative flex flex-col overflow-hidden rounded-xl border-[0.75px] border-gray-700/30 bg-black/40 backdrop-blur-sm shadow-sm min-h-[130px] sm:min-h-[150px] lg:min-h-[170px] group-hover:bg-gray-800/30 transition-all duration-300">
+      <div className="bg-gray-800/40 backdrop-blur-md border-b border-gray-700/40 px-3 sm:px-4 py-2 sm:py-2.5">
+        <h2 className="text-sm sm:text-base font-light text-white group-hover:text-white transition-colors duration-300" style={{ fontFamily: 'var(--font-montserrat)' }}>{title}</h2>
       </div>
       <div className="divide-y divide-gray-700/30 flex-1 overflow-hidden">
         {children}
@@ -66,8 +82,8 @@ const StatsFilter = ({ selectedFilter, onFilterChange }: { selectedFilter: strin
   ];
 
   return (
-    <div className="flex flex-col space-y-6 justify-center items-center">
-      <h2 className="text-2xl font-light text-white" style={{ fontFamily: 'var(--font-montserrat)' }}>
+    <div className="flex flex-col space-y-4 sm:space-y-6 justify-center items-center w-full">
+      <h2 className="text-xl sm:text-2xl font-light text-white" style={{ fontFamily: 'var(--font-montserrat)' }}>
         Filter by Stat
       </h2>
       <div className="space-y-3 w-full">
@@ -218,7 +234,7 @@ export default function Leaderboards() {
       previewData: [...statsData].sort((a, b) => b.wins - a.wins).map(f => ({ fighter: f.fighter, value: f.wins })),
       data: topWins, 
       render: (fighter: StatsData, index: number) => (
-        <LeaderboardRow key={fighter.fighter} rank={index + 1} name={fighter.fighter} value={fighter.wins} />
+        <LeaderboardRow key={fighter.fighter} rank={index + 1} name={fighter.fighter} value={fighter.wins} compact={true} />
       )
     },
     { 
@@ -226,7 +242,7 @@ export default function Leaderboards() {
       previewData: [...statsData].sort((a, b) => b.strikes - a.strikes).map(f => ({ fighter: f.fighter, value: f.strikes.toLocaleString() })),
       data: topStrikes, 
       render: (fighter: StatsData, index: number) => (
-        <LeaderboardRow key={fighter.fighter} rank={index + 1} name={fighter.fighter} value={fighter.strikes.toLocaleString()} />
+        <LeaderboardRow key={fighter.fighter} rank={index + 1} name={fighter.fighter} value={fighter.strikes.toLocaleString()} compact={true} />
       )
     },
     { 
@@ -234,7 +250,7 @@ export default function Leaderboards() {
       previewData: [...statsData].sort((a, b) => b.takedowns - a.takedowns).map(f => ({ fighter: f.fighter, value: f.takedowns })),
       data: topTakedowns, 
       render: (fighter: StatsData, index: number) => (
-        <LeaderboardRow key={fighter.fighter} rank={index + 1} name={fighter.fighter} value={fighter.takedowns} />
+        <LeaderboardRow key={fighter.fighter} rank={index + 1} name={fighter.fighter} value={fighter.takedowns} compact={true} />
       )
     },
     { 
@@ -242,7 +258,7 @@ export default function Leaderboards() {
       previewData: [...statsData].sort((a, b) => b.submissions - a.submissions).map(f => ({ fighter: f.fighter, value: f.submissions })),
       data: topSubmissions, 
       render: (fighter: StatsData, index: number) => (
-        <LeaderboardRow key={fighter.fighter} rank={index + 1} name={fighter.fighter} value={fighter.submissions} />
+        <LeaderboardRow key={fighter.fighter} rank={index + 1} name={fighter.fighter} value={fighter.submissions} compact={true} />
       )
     },
   ];
@@ -250,17 +266,17 @@ export default function Leaderboards() {
   return (
     <>
       {/* Elo Ratings Page */}
-      <section id="elo" className="snap-start min-h-screen">
-        <div className="relative z-10 px-4 py-8 max-w-7xl mx-auto flex flex-col items-center justify-center min-h-screen">
-          <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <section id="elo" className="md:snap-start min-h-screen">
+        <div className="relative z-10 px-2 sm:px-4 py-8 sm:py-12 lg:py-16 max-w-7xl lg:max-w-[90rem] xl:max-w-[100rem] mx-auto flex flex-col items-center justify-center min-h-screen pr-4 sm:pr-6 lg:pr-8 xl:pr-12">
+          <div className="w-full max-w-6xl lg:max-w-7xl xl:max-w-8xl grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8 lg:gap-12">
             {/* Left Side - Explanation */}
-            <div className="flex flex-col justify-center space-y-6">
-              <div className="space-y-4">
-                <p className="text-gray-200 font-light text-base leading-relaxed" style={{ fontFamily: 'var(--font-montserrat)' }}>
+            <div className="flex flex-col justify-center space-y-4 sm:space-y-6 lg:space-y-8">
+              <div className="space-y-3 sm:space-y-4 lg:space-y-6">
+                <p className="text-gray-200 font-light text-sm sm:text-base lg:text-lg leading-relaxed" style={{ fontFamily: 'var(--font-montserrat)' }}>
                   This site displays the elo for every fighter in the UFC.
                 </p>
                 
-                <p className="text-gray-100 font-light text-base leading-relaxed" style={{ fontFamily: 'var(--font-montserrat)' }}>
+                <p className="text-gray-100 font-light text-sm sm:text-base lg:text-lg leading-relaxed" style={{ fontFamily: 'var(--font-montserrat)' }}>
                   The Elo rating system updates after each fight based on the expected outcome versus the actual result. Fighters start at 1000 Elo, and the K-factor of 40 determines how much ratings change per fight.
                 </p>
                 
@@ -305,19 +321,15 @@ def update_elo(elo_a, elo_b, score_for_a):
                     movementDuration={2}
                   />
                   <div className="relative flex flex-col overflow-hidden rounded-xl border-[0.75px] border-gray-700/30 bg-black/40 backdrop-blur-sm shadow-sm">
-                    <div className="bg-gray-800/40 backdrop-blur-md border-b border-gray-700/40 px-4 py-2.5">
-                      <h2 className="text-base font-light text-white" style={{ fontFamily: 'var(--font-montserrat)' }}>Top 100</h2>
+                    <div className="bg-gray-800/40 backdrop-blur-md border-b border-gray-700/40 px-4 lg:px-6 py-2.5 lg:py-3">
+                      <h2 className="text-base lg:text-lg xl:text-xl font-light text-white" style={{ fontFamily: 'var(--font-montserrat)' }}>Top 100</h2>
                     </div>
                     <div 
-                      className="divide-y divide-gray-700/30 h-[450px] custom-scrollbar" 
+                      className="divide-y divide-gray-700/30 custom-scrollbar h-[200px] sm:h-[240px] lg:h-[420px] overflow-y-scroll overflow-x-hidden"
                       style={{ 
-                        overflowY: 'scroll',
-                        overflowX: 'hidden',
                         scrollbarWidth: 'thin',
                         scrollbarColor: 'rgba(156, 163, 175, 0.6) rgba(55, 65, 81, 0.4)',
-                        WebkitOverflowScrolling: 'touch',
-                        minHeight: '450px',
-                        maxHeight: '450px'
+                        WebkitOverflowScrolling: 'touch'
                       }}
                     >
                       {eloLeaderboard.data.slice(0, 100).map((fighter, fighterIndex) =>
@@ -333,9 +345,9 @@ def update_elo(elo_a, elo_b, score_for_a):
       </section>
 
       {/* Stats Page */}
-      <section id="stats" className="snap-start min-h-screen">
-        <div className="relative z-10 px-4 py-8 max-w-7xl mx-auto flex flex-col items-center justify-center min-h-screen">
-          <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-8 items-center">
+      <section id="stats" className="md:snap-start min-h-screen">
+        <div className="relative z-10 px-2 sm:px-4 py-8 sm:py-12 lg:py-16 max-w-7xl lg:max-w-[90rem] xl:max-w-[100rem] mx-auto flex flex-col items-center justify-center min-h-screen pr-4 sm:pr-6 lg:pr-8 xl:pr-12">
+          <div className="w-full max-w-6xl lg:max-w-7xl xl:max-w-8xl grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-4 sm:gap-8 lg:gap-12 items-center">
             {/* Left Side - Filter */}
             <StatsFilter selectedFilter={selectedStatFilter} onFilterChange={setSelectedStatFilter} />
             
@@ -385,15 +397,11 @@ def update_elo(elo_a, elo_b, score_for_a):
                             </h2>
                           </div>
                           <div 
-                            className="divide-y divide-gray-700/30 h-[450px] custom-scrollbar" 
+                            className="divide-y divide-gray-700/30 h-[200px] sm:h-[240px] lg:h-[360px] custom-scrollbar overflow-y-scroll overflow-x-hidden"
                             style={{ 
-                              overflowY: 'scroll',
-                              overflowX: 'hidden',
                               scrollbarWidth: 'thin',
                               scrollbarColor: 'rgba(156, 163, 175, 0.6) rgba(55, 65, 81, 0.4)',
-                              WebkitOverflowScrolling: 'touch',
-                              minHeight: '450px',
-                              maxHeight: '450px'
+                              WebkitOverflowScrolling: 'touch'
                             }}
                           >
                             {selectedLeaderboard.previewData.map((item, index) => (
@@ -413,7 +421,7 @@ def update_elo(elo_a, elo_b, score_for_a):
               </div>
             ) : (
               // 2x2 grid when "all" is selected or no filter
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 {statLeaderboards.map((leaderboard, index) => (
                   <div
                     key={index}

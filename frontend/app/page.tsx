@@ -7,17 +7,17 @@ import DownloadsSocials from "@/components/DownloadsSocials";
 export default function Home() {
   return (
     <div className="min-h-screen">
-      <section className="snap-start min-h-screen">
+      <section className="md:snap-start min-h-screen">
         <Hero />
       </section>
       <Leaderboards />
-      <section id="search" className="snap-start min-h-screen">
+      <section id="search" className="md:snap-start min-h-screen">
         <FighterSearch />
       </section>
-      <section id="resources" className="snap-start min-h-screen">
+      <section id="resources" className="md:snap-start min-h-screen">
         <Resources />
       </section>
-      <section id="downloads" className="snap-start min-h-screen">
+      <section id="downloads" className="md:snap-start min-h-screen">
         <DownloadsSocials />
       </section>
     </div>

@@ -357,16 +357,16 @@ export default function Resources() {
   const [activeCode, setActiveCode] = useState<'elo' | 'stats' | 'scraper'>('elo');
 
   return (
-    <div className="relative z-10 px-4 py-8 max-w-7xl mx-auto flex flex-col items-center justify-center min-h-screen">
-      <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-8 mx-auto items-center">
+    <div className="relative z-10 px-2 sm:px-4 py-4 sm:py-8 max-w-7xl mx-auto flex flex-col items-center justify-center min-h-screen">
+      <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-4 sm:gap-8 mx-auto items-center">
         {/* Left Side - Controls and Downloads */}
         <div className="flex flex-col space-y-6 justify-center">
           {/* Source Code Title */}
-          <div className="space-y-3">
-            <h2 className="text-2xl font-light text-white" style={{ fontFamily: 'var(--font-montserrat)' }}>
+          <div className="space-y-2 sm:space-y-3">
+            <h2 className="text-xl sm:text-2xl font-light text-white" style={{ fontFamily: 'var(--font-montserrat)' }}>
               Source Code
             </h2>
-            <p className="text-base font-light text-gray-300 leading-relaxed" style={{ fontFamily: 'var(--font-montserrat)' }}>
+            <p className="text-sm sm:text-base font-light text-gray-300 leading-relaxed" style={{ fontFamily: 'var(--font-montserrat)' }}>
               I scraped the UFC stats page with BeautifulSoup, then used pandas to compile the data with further parsing to organize it for Elo calculations, fighter statistics, and more.
             </p>
           </div>
@@ -399,7 +399,7 @@ export default function Resources() {
           </Link>
           
           {/* Code Tabs */}
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-2 sm:gap-3">
             <button
               onClick={() => setActiveCode('scraper')}
               className={cn(
@@ -505,24 +505,24 @@ export default function Resources() {
         </div>
 
         {/* Right Side - Scrollable Code Display */}
-        <div className="flex flex-col" style={{ minWidth: 0, width: '100%', overflow: 'hidden' }}>
-          <div className="relative rounded-xl border-[0.75px] border-gray-700/50 bg-gray-900/60 backdrop-blur-sm overflow-hidden h-[80vh] flex flex-col" style={{ minWidth: 0, width: '100%', maxWidth: '100%' }}>
+        <div className="flex flex-col w-full" style={{ minWidth: 0, overflow: 'hidden' }}>
+          <div className="relative rounded-xl border-[0.75px] border-gray-700/50 bg-gray-900/60 backdrop-blur-sm overflow-hidden h-[60vh] sm:h-[80vh] flex flex-col w-full" style={{ minWidth: 0, maxWidth: '100%' }}>
             {/* Jupyter notebook style header */}
-            <div className="bg-gray-800/80 px-4 py-2 border-b border-gray-700/50 flex items-center gap-2 flex-shrink-0">
+            <div className="bg-gray-800/80 px-3 sm:px-4 py-2 border-b border-gray-700/50 flex items-center gap-2 flex-shrink-0">
               <div className="flex gap-1.5">
-                <div className="w-3 h-3 rounded-full bg-red-500/60"></div>
-                <div className="w-3 h-3 rounded-full bg-yellow-500/60"></div>
-                <div className="w-3 h-3 rounded-full bg-green-500/60"></div>
+                <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-red-500/60"></div>
+                <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-yellow-500/60"></div>
+                <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-green-500/60"></div>
               </div>
-              <span className="text-xs text-gray-400 font-light ml-2" style={{ fontFamily: 'var(--font-montserrat)' }}>
+              <span className="text-[10px] sm:text-xs text-gray-400 font-light ml-2" style={{ fontFamily: 'var(--font-montserrat)' }}>
                 python
               </span>
             </div>
             
             {/* Scrollable Code content */}
-            <div className="flex-1 overflow-y-auto overflow-x-auto custom-scrollbar p-4" style={{ minWidth: 0, width: '100%', maxWidth: '100%' }}>
-              <pre className="text-sm text-gray-200 font-mono leading-relaxed whitespace-pre" style={{ display: 'block', margin: 0 }}>
-                <code style={{ display: 'block', minWidth: 'max-content' }}>
+            <div className="flex-1 overflow-y-auto overflow-x-auto custom-scrollbar p-2 sm:p-4" style={{ minWidth: 0, width: '100%', maxWidth: '100%' }}>
+              <pre className="text-xs sm:text-sm text-gray-200 font-mono leading-relaxed whitespace-pre-wrap break-words" style={{ display: 'block', margin: 0 }}>
+                <code style={{ display: 'block', wordBreak: 'break-word', overflowWrap: 'break-word' }}>
                   {activeCode === 'elo' ? eloCode : activeCode === 'stats' ? statsCode : scraperCode}
                 </code>
               </pre>

@@ -55,9 +55,33 @@ export default function Navbar() {
   return (
     <nav className="relative z-20 w-full py-8 md:py-10">
       <div className="flex items-center justify-center">
-        {/* Rounded-square container */}
-        <div className="relative rounded-2xl bg-black/40 backdrop-blur-md border border-gray-700/50 shadow-lg px-4 py-4 md:px-5 md:py-4">
-          <div className="flex items-center justify-center gap-3 md:gap-4">
+        {/* Mobile: Free-flowing buttons */}
+        <div className="flex items-center justify-center gap-2 flex-wrap px-2 md:hidden">
+          {navItems.map((item) => {
+            const sectionId = item.href.replace('#', '');
+            const isActive = activeSection === sectionId;
+            
+            return (
+              <button
+                key={item.href}
+                onClick={() => handleNavClick(item.href)}
+                className={cn(
+                  "rounded-lg bg-black/40 backdrop-blur-md border border-gray-700/50 px-3 py-2 transition-all duration-300",
+                  "text-xs font-light text-white",
+                  "hover:bg-gray-800/40",
+                  isActive && "bg-gray-800/50"
+                )}
+                style={{ fontFamily: 'var(--font-montserrat)' }}
+              >
+                {item.label}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Desktop: Wrapped in container */}
+        <div className="hidden md:block relative rounded-2xl bg-black/40 backdrop-blur-md border border-gray-700/50 shadow-lg px-5 py-4">
+          <div className="flex items-center justify-center gap-4">
             {navItems.map((item) => {
               const sectionId = item.href.replace('#', '');
               const isActive = activeSection === sectionId;
@@ -82,14 +106,14 @@ export default function Navbar() {
                     movementDuration={2}
                   />
                   <div className={cn(
-                    "relative flex items-center justify-center rounded-lg border-[0.75px] border-gray-700/30 bg-black/40 backdrop-blur-sm px-5 py-2.5 md:px-6 md:py-3 transition-all duration-300",
+                    "relative flex items-center justify-center rounded-lg border-[0.75px] border-gray-700/30 bg-black/40 backdrop-blur-sm px-6 py-3 transition-all duration-300",
                     isActive 
                       ? "bg-gray-800/40 backdrop-blur-md border-gray-700/40" 
                       : "hover:bg-gray-800/30"
                   )}>
                     <span
                       className={cn(
-                        "text-sm md:text-base font-light transition-colors duration-300",
+                        "text-base font-light transition-colors duration-300",
                         isActive
                           ? "text-white"
                           : "text-gray-300 group-hover:text-white"

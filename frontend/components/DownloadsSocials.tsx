@@ -61,15 +61,15 @@ const socialLinks = [
 
 export default function DownloadsSocials() {
   return (
-    <div className="relative z-10 px-4 py-8 max-w-7xl mx-auto flex flex-col items-center justify-center min-h-screen">
-      <div className="w-full max-w-4xl space-y-12">
+    <div className="relative z-10 px-2 sm:px-4 py-4 sm:py-8 max-w-7xl mx-auto flex flex-col items-center justify-center min-h-screen">
+      <div className="w-full max-w-4xl space-y-8 sm:space-y-12">
         {/* CSV Downloads Section */}
-        <div className="space-y-6">
-          <h2 className="text-2xl font-light text-white text-center" style={{ fontFamily: 'var(--font-montserrat)' }}>
+        <div className="space-y-4 sm:space-y-6">
+          <h2 className="text-xl sm:text-2xl font-light text-white text-center" style={{ fontFamily: 'var(--font-montserrat)' }}>
             Download Data as CSV
           </h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
             {csvFiles.map((csv) => (
               <a
                 key={csv.file}
@@ -101,8 +101,8 @@ export default function DownloadsSocials() {
         </div>
 
         {/* Social Links Section - Pill Style */}
-        <div className="flex flex-col items-center space-y-6">
-          <h2 className="text-2xl font-light text-white" style={{ fontFamily: 'var(--font-montserrat)' }}>
+        <div className="flex flex-col items-center space-y-4 sm:space-y-6">
+          <h2 className="text-xl sm:text-2xl font-light text-white" style={{ fontFamily: 'var(--font-montserrat)' }}>
             Connect With Me
           </h2>
           
