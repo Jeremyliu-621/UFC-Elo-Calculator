@@ -106,7 +106,44 @@ export default function DownloadsSocials() {
             Connect With Me
           </h2>
           
-          <div className="relative rounded-full border-[0.75px] border-gray-700/50 p-2 bg-black/40 backdrop-blur-md">
+          {/* Mobile: Free-flowing buttons without pill container */}
+          <div className="flex flex-wrap justify-center gap-3 md:hidden">
+            {socialLinks.map((link) => {
+              const Icon = link.icon;
+              return (
+                <Link
+                  key={link.name}
+                  href={link.href}
+                  target={link.href.startsWith('http') || link.href.startsWith('./') ? '_blank' : undefined}
+                  rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+                  aria-label={link.ariaLabel}
+                  className="group relative rounded-xl border-[0.75px] border-gray-700/50 p-1.5 transition-all duration-300 cursor-pointer hover:scale-105"
+                >
+                  <GlowingEffect
+                    spread={20}
+                    glow={true}
+                    disabled={false}
+                    proximity={64}
+                    inactiveZone={0.7}
+                    borderWidth={1}
+                    movementDuration={2}
+                  />
+                  <div className={cn(
+                    "relative flex flex-col items-center justify-center gap-1.5 rounded-lg border-[0.75px] border-gray-700/30 bg-black/40 backdrop-blur-sm px-4 py-2.5 transition-all duration-300",
+                    "hover:bg-gray-800/30"
+                  )}>
+                    <Icon className="size-4 text-gray-300 group-hover:text-white transition-colors duration-300" />
+                    <span className="text-xs font-light text-gray-300 group-hover:text-white transition-colors duration-300" style={{ fontFamily: 'var(--font-montserrat)' }}>
+                      {link.name}
+                    </span>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+
+          {/* Desktop: With pill container */}
+          <div className="hidden md:block relative rounded-full border-[0.75px] border-gray-700/50 p-2 bg-black/40 backdrop-blur-md">
             <div className="flex flex-wrap justify-center gap-3 px-4 py-3">
               {socialLinks.map((link) => {
                 const Icon = link.icon;
